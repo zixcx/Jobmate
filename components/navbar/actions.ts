@@ -1,9 +1,14 @@
+"use server";
 import getSession from "@/lib/session";
 import { redirect } from "next/navigation";
 
 export async function isLogin() {
     const session = await getSession();
-    return Boolean(session.id);
+    if (!session.id) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 export async function logout() {

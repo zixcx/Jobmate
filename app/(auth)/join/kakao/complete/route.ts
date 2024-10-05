@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
         // 4. 세션에 사용자 ID 저장
         await loginSession(user.id);
 
-        return NextResponse.redirect(new URL("/", request.url));
+        return NextResponse.redirect(new URL("/select", request.url));
     } catch (error) {
         console.error("Error during Kakao login process:", error);
         return new Response("Internal server error", {

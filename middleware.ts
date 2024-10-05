@@ -20,10 +20,16 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL("/", request.url));
         }
     } else {
-        if (exists) {
-            return NextResponse.redirect(new URL("/home", request.url));
+        if (request.nextUrl.pathname === "/join") {
+            return NextResponse.redirect(new URL("/select", request.url));
         }
     }
+    // ???
+    // else {
+    //     if (exists) {
+    //         return NextResponse.redirect(new URL("/select", request.url));
+    //     }
+    // }
 }
 
 export const config = {

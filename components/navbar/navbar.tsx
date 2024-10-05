@@ -2,8 +2,10 @@
 import classNames from "classnames";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { isLogin as checkLogin, logout } from "./actions"; // isLogin과 logout을 가져옵니다.
 
 export default function Navbar() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // isLogin 상태를 나타내는 변수
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const toggleMenu = () => {
@@ -23,6 +25,21 @@ export default function Navbar() {
             window.removeEventListener("resize", handleResize);
         };
     }, [isMenuOpen]);
+
+    useEffect(() => {
+        const checkUserLogin = async () => {
+            const loginStatus = await checkLogin(); // 로그인 상태를 확인
+            setIsLoggedIn(loginStatus); // 로그인 상태 업데이트
+        };
+
+        checkUserLogin(); // 로그인 상태 확인 함수 호출
+    }, []);
+
+    const handleLogout = async () => {
+        await logout(); // 로그아웃 처리
+        const loginStatus = await checkLogin(); // 로그아웃 후 로그인 상태 다시 확인
+        setIsLoggedIn(loginStatus); // 로그인 상태 업데이트
+    };
 
     return (
         <div className="w-full fixed h-16 flex items-center px-10 md:px-14 bg-white border-b shadow-sm justify-between">
@@ -77,7 +94,7 @@ export default function Navbar() {
                     </li>
                     <li className="px-3 py-2 rounded-lg hover:bg-neutral-200 cursor-pointer">
                         <Link
-                            href={"/"}
+                            href={"#qna"}
                             onClick={toggleMenu}
                             className="w-full h-full block"
                         >
@@ -86,7 +103,7 @@ export default function Navbar() {
                     </li>
                     <li className="px-3 py-2 rounded-lg hover:bg-neutral-200 cursor-pointer">
                         <Link
-                            href={"/"}
+                            href={"#guide"}
                             onClick={toggleMenu}
                             className="w-full h-full block"
                         >
@@ -95,11 +112,18 @@ export default function Navbar() {
                     </li>
                     <li className="px-3 py-2 rounded-lg hover:bg-neutral-200 cursor-pointer">
                         <Link
-                            href={"/join"}
-                            onClick={toggleMenu}
+                            href={isLoggedIn ? "#logout" : "/join"} // 로그인 상태에 따라 링크 변경
+                            onClick={
+                                isLoggedIn
+                                    ? (e) => {
+                                          e.preventDefault();
+                                          handleLogout();
+                                      }
+                                    : toggleMenu
+                            } // 로그아웃 처리
                             className="w-full h-full block"
                         >
-                            로그인
+                            {isLoggedIn ? "로그아웃" : "로그인"}
                         </Link>
                     </li>
                 </ul>
@@ -117,18 +141,29 @@ export default function Navbar() {
                         </Link>
                     </li>
                     <li className="px-3 py-2 rounded-lg hover:bg-neutral-200 cursor-pointer">
-                        <Link href={""} className="w-full h-full block">
+                        <Link href={"#qna"} className="w-full h-full block">
                             자주 묻는 질문
                         </Link>
                     </li>
                     <li className="px-3 py-2 rounded-lg hover:bg-neutral-200 cursor-pointer">
-                        <Link href={""} className="w-full h-full block">
+                        <Link href={"#guide"} className="w-full h-full block">
                             사용 가이드
                         </Link>
                     </li>
                     <li className="px-3 py-2 rounded-lg text-white bg-teal-500 hover:bg-teal-600 cursor-pointer">
-                        <Link href={"/join"} className="w-full h-full block">
-                            로그인
+                        <Link
+                            href={isLoggedIn ? "#logout" : "/join"} // 로그인 상태에 따라 링크 변경
+                            onClick={
+                                isLoggedIn
+                                    ? (e) => {
+                                          e.preventDefault();
+                                          handleLogout();
+                                      }
+                                    : undefined
+                            } // 로그아웃 처리
+                            className="w-full h-full block"
+                        >
+                            {isLoggedIn ? "로그아웃" : "로그인"}
                         </Link>
                     </li>
                 </ul>

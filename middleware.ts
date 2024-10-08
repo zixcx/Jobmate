@@ -21,7 +21,7 @@ export async function middleware(request: NextRequest) {
         }
     } else {
         if (request.nextUrl.pathname === "/join") {
-            return NextResponse.redirect(new URL("/select", request.url));
+            return NextResponse.redirect(new URL("/selection", request.url));
         }
     }
     // ???

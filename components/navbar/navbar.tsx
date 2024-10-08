@@ -94,7 +94,7 @@ export default function Navbar() {
                     </li>
                     <li className="px-3 py-2 rounded-lg hover:bg-neutral-200 cursor-pointer">
                         <Link
-                            href={"#qna"}
+                            href={"/#qna"}
                             onClick={toggleMenu}
                             className="w-full h-full block"
                         >
@@ -103,7 +103,7 @@ export default function Navbar() {
                     </li>
                     <li className="px-3 py-2 rounded-lg hover:bg-neutral-200 cursor-pointer">
                         <Link
-                            href={"#guide"}
+                            href={"/#guide"}
                             onClick={toggleMenu}
                             className="w-full h-full block"
                         >
@@ -141,12 +141,12 @@ export default function Navbar() {
                         </Link>
                     </li>
                     <li className="px-3 py-2 rounded-lg hover:bg-neutral-200 cursor-pointer">
-                        <Link href={"#qna"} className="w-full h-full block">
+                        <Link href={"/#qna"} className="w-full h-full block">
                             자주 묻는 질문
                         </Link>
                     </li>
                     <li className="px-3 py-2 rounded-lg hover:bg-neutral-200 cursor-pointer">
-                        <Link href={"#guide"} className="w-full h-full block">
+                        <Link href={"/#guide"} className="w-full h-full block">
                             사용 가이드
                         </Link>
                     </li>

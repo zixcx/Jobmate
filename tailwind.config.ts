@@ -14,6 +14,15 @@ const config: Config = {
                 "gradient-conic":
                     "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
             },
+            keyframes: {
+                "slide-up": {
+                    "0%": { transform: "translateY(20px)", opacity: "0" },
+                    "100%": { transform: "translateY(0)", opacity: "1" },
+                },
+            },
+            animation: {
+                "slide-up": "slide-up 0.5s ease-in-out forwards",
+            },
         },
     },
     plugins: [daisyui],

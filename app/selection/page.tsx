@@ -1,7 +1,7 @@
 "use client";
 
-import OwnerForm from "@/components/selectForm/owner_form";
-import StaffForm from "@/components/selectForm/staff_form";
+import OwnerForm from "@/components/selectForm/owner/owner_form";
+import StaffForm from "@/components/selectForm/staff/staff_form";
 import {
     BuildingStorefrontIcon,
     CheckCircleIcon,

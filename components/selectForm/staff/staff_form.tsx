@@ -13,31 +13,34 @@ export default function StaffForm() {
         name: "",
         birth_year: "",
         phone: "",
-        gender: "M", // 기본값으로 "M"
+        gender: "M",
     });
     const [isButtonVisible, setIsButtonVisible] = useState(false);
 
     const toggleGender = (selectedGender: "M" | "F") => {
+        // 성별을 선택했을 때, gender 상태를 업데이트
         setGender(selectedGender);
-        setFormData({
-            ...formData,
+
+        // formData를 업데이트
+        setFormData((prevData) => ({
+            ...prevData,
             gender: selectedGender, // 성별 값을 "M" 또는 "F"로 설정
-        });
+        }));
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         if (name === "birth_year" || name === "phone") {
             const numericValue = value.replace(/\D/g, "");
-            setFormData({
-                ...formData,
+            setFormData((prevData) => ({
+                ...prevData,
                 [name]: numericValue,
-            });
+            }));
         } else {
-            setFormData({
-                ...formData,
+            setFormData((prevData) => ({
+                ...prevData,
                 [name]: value,
-            });
+            }));
         }
     };
 
@@ -52,9 +55,19 @@ export default function StaffForm() {
 
     const [state, action] = useFormState(staffFormAction, null);
 
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.currentTarget);
+        formData.append("gender", gender);
+
+        action(formData);
+    };
+
     return (
         <form
             action={action}
+            onSubmit={handleSubmit}
             className="flex flex-col items-start justify-center max-w-xs min-h-screen gap-8 mx-auto min-w-52"
         >
             <div>
@@ -113,12 +126,6 @@ export default function StaffForm() {
                 </label>
             </div>
             <div className="flex justify-between w-full h-12 gap-1 rounded-xl bg-neutral-200">
-                <input
-                    type="checkbox"
-                    name="gender"
-                    checked={gender === "M"}
-                    className="hidden"
-                />
                 <div
                     onClick={() => toggleGender("M")}
                     className={classNames(
@@ -145,6 +152,7 @@ export default function StaffForm() {
 
             {isButtonVisible && (
                 <button
+                    type="submit"
                     className={
                         "flex items-center justify-center h-12 px-3 py-2 mt-3 text-white transition-all bg-teal-500 rounded-lg shadow select-none w-80 md:w-full animate-slide-up"
                     }

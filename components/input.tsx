@@ -20,7 +20,7 @@ export default function Input({
             {errors.map((error, idx) => (
                 <span
                     key={idx}
-                    className="-mt-1 text-sm font-medium text-red-500"
+                    className="-mt-1 text-[0.7rem] font-medium text-red-500"
                 >
                     {error}
                 </span>

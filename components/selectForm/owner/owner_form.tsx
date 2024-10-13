@@ -179,7 +179,6 @@ export default function OwnerForm() {
             {isShowModal && (
                 <Modal onClose={closeModal} closeButtonVisible>
                     <div className="w-full h-full border">
-                        {/* @ts-expect-error: DaumPostcode component does not have defined props in TypeScript */}
                         <DaumPostcode
                             onComplete={handleComplete}
                             onClose={handleClose}

@@ -79,6 +79,6 @@ export async function staffFormAction(_: any, formData: FormData) {
         });
 
         // 4. 리디렉션
-        redirect("/staff");
+        redirect("/staff/home");
     }
 }

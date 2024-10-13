@@ -44,6 +44,7 @@ export default async function StaffProfile() {
                 <h1 className="mt-10 text-2xl font-semibold">
                     {user?.staff?.name}
                 </h1>
+                <span>성별: {user?.staff?.gender === "M" ? "남" : "여"}</span>
                 <span>태어난 연도: {user?.staff?.birth_year}</span>
                 <span>
                     나이: {calculateAge(Number(user?.staff?.birth_year))}

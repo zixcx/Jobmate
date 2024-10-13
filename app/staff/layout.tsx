@@ -6,7 +6,6 @@ export default function TapLayout({ children }: { children: React.ReactNode }) {
         <div>
             {children}
             <div className="md:hidden">
-                <div className="w-full h-20" />
                 <TabBar />
             </div>
         </div>

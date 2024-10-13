@@ -13,7 +13,7 @@ import classNames from "classnames";
 export default function TabBar() {
     const pathname = usePathname();
     return (
-        <div className="left-1/2 fixed bottom-0 transform -translate-x-1/2 w-full max-w-screen-md grid grid-cols-4 bg-white border-neutral-50 rounded-t-lg border-t-2 px-5 py-3 *:text-black">
+        <div className="left-1/2 fixed bottom-0 transform -translate-x-1/2 w-full max-w-screen-md grid grid-cols-4 h-[72px] bg-white border-neutral-50 rounded-t-lg border-t-2 px-5 py-3 *:text-black">
             <Link
                 href="/staff/home"
                 className="flex flex-col items-center gap-px"

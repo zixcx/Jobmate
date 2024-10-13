@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px white inset !important; /* 배경색을 흰색으로 설정 */
+    box-shadow: 0 0 0 30px white inset !important; /* 배경색을 흰색으로 설정 */
+  }
 }
 
 @layer components {

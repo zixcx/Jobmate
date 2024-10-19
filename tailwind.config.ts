@@ -1,6 +1,5 @@
 import type { Config } from "tailwindcss";
 import daisyui from "daisyui";
-import { PluginAPI } from "tailwindcss/types/config";
 
 const config: Config = {
     content: [
@@ -16,13 +15,13 @@ const config: Config = {
                     "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
             },
             keyframes: {
-                "slide-up": {
-                    "0%": { transform: "translateY(20px)", opacity: "0" },
-                    "100%": { transform: "translateY(0)", opacity: "1" },
+                "mount-effect": {
+                    "0%": { opacity: "0" },
+                    "100%": { opacity: "1" },
                 },
             },
             animation: {
-                "slide-up": "slide-up 0.5s ease-in-out forwards",
+                mount: "0.5s ease-in-out mount-effect",
             },
         },
     },

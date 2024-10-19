@@ -1,64 +1,109 @@
 "use client";
 import {
-    HomeIcon as SolidHomeIcon,
-    NewspaperIcon as SolidNewspaperIcon,
-    ChatBubbleOvalLeftEllipsisIcon as SolidChatIcon,
-    VideoCameraIcon as SolidVideoCameraIcon,
-    UserIcon as SolidUserIcon,
-} from "@heroicons/react/24/solid";
-import {
-    HomeIcon as OutlineHomeIcon,
-    NewspaperIcon as OutlineNewspaperIcon,
-    ChatBubbleOvalLeftEllipsisIcon as OutlineChatIcon,
-    VideoCameraIcon as OutlineVideoCameraIcon,
-    UserIcon as OutlineUserIcon,
+    HomeIcon,
+    UserIcon,
+    BuildingStorefrontIcon,
+    CalendarDaysIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import classNames from "classnames";
 
 export default function TabBar() {
     const pathname = usePathname();
     return (
-        <div className="left-1/2 fixed bottom-0 transform -translate-x-1/2 w-full max-w-screen-md grid grid-cols-5 bg-white border-neutral-50 rounded-t-lg border-t px-5 py-3 *:text-black">
-            <Link href="/home" className="flex flex-col items-center gap-px">
-                {pathname === "/home" ? (
-                    <SolidHomeIcon className="w-7 h-7" />
-                ) : (
-                    <OutlineHomeIcon className="w-7 h-7" />
-                )}
-                <span>근무</span>
+        <div className="left-1/2 fixed bottom-0 transform -translate-x-1/2 w-full max-w-screen-md grid grid-cols-4 h-[72px] bg-white border-neutral-50 rounded-t-lg border-t-2 px-5 py-3 *:text-black">
+            <Link
+                href="/owner/home"
+                className="flex flex-col items-center gap-px"
+            >
+                <HomeIcon
+                    className={classNames(
+                        "w-7 h-7",
+                        pathname === "/owner/home"
+                            ? "text-black"
+                            : "text-neutral-400"
+                    )}
+                />
+                <span
+                    className={classNames(
+                        "text-xs",
+                        pathname === "/owner/home"
+                            ? "text-black"
+                            : "text-neutral-400"
+                    )}
+                >
+                    홈
+                </span>
             </Link>
-            <Link href="/life" className="flex flex-col items-center gap-px">
-                {pathname === "/life" ? (
-                    <SolidNewspaperIcon className="w-7 h-7" />
-                ) : (
-                    <OutlineNewspaperIcon className="w-7 h-7" />
-                )}
-                <span>동네생활</span>
+            <Link
+                href="/owner/schedule"
+                className="flex flex-col items-center gap-px"
+            >
+                <CalendarDaysIcon
+                    className={classNames(
+                        "w-7 h-7",
+                        pathname === "/owner/schedule"
+                            ? "text-black"
+                            : "text-neutral-400"
+                    )}
+                />
+                <span
+                    className={classNames(
+                        "text-xs",
+                        pathname === "/owner/schedule"
+                            ? "text-black"
+                            : "text-neutral-400"
+                    )}
+                >
+                    일정
+                </span>
             </Link>
-            <Link href="/chat" className="flex flex-col items-center gap-px">
-                {pathname === "/chat" ? (
-                    <SolidChatIcon className="w-7 h-7" />
-                ) : (
-                    <OutlineChatIcon className="w-7 h-7" />
-                )}
-                <span>채팅</span>
+            <Link
+                href="/owner/work"
+                className="flex flex-col items-center gap-px"
+            >
+                <BuildingStorefrontIcon
+                    className={classNames(
+                        "w-7 h-7",
+                        pathname === "/owner/work"
+                            ? "text-black"
+                            : "text-neutral-400"
+                    )}
+                />
+                <span
+                    className={classNames(
+                        "text-xs",
+                        pathname === "/owner/work"
+                            ? "text-black"
+                            : "text-neutral-400"
+                    )}
+                >
+                    근무
+                </span>
             </Link>
-            <Link href="/live" className="flex flex-col items-center gap-px">
-                {pathname === "/live" ? (
-                    <SolidVideoCameraIcon className="w-7 h-7" />
-                ) : (
-                    <OutlineVideoCameraIcon className="w-7 h-7" />
-                )}
-                <span>쇼핑</span>
-            </Link>
-            <Link href="/profile" className="flex flex-col items-center gap-px">
-                {pathname === "/profile" ? (
-                    <SolidUserIcon className="w-7 h-7" />
-                ) : (
-                    <OutlineUserIcon className="w-7 h-7" />
-                )}
-                <span>나의 당근</span>
+            <Link
+                href="/owner/profile"
+                className="flex flex-col items-center gap-px"
+            >
+                <UserIcon
+                    className={classNames(
+                        "w-7 h-7",
+                        pathname === "/owner/profile"
+                            ? "text-black"
+                            : "text-neutral-400"
+                    )}
+                />
+                <span
+                    className={classNames(
+                        "text-xs",
+                        pathname === "/owner/profile"
+                            ? "text-black"
+                            : "text-neutral-400"
+                    )}
+                >
+                    프로필
+                </span>
             </Link>
         </div>
     );

@@ -7,6 +7,10 @@
     -webkit-box-shadow: 0 0 0 30px white inset !important; /* 배경색을 흰색으로 설정 */
     box-shadow: 0 0 0 30px white inset !important; /* 배경색을 흰색으로 설정 */
   }
+  /* 모든 페이지의 배경색을 bg-neutral-100으로 설정 */
+  body {
+    @apply bg-neutral-50;
+  }
 }
 
 @layer components {
@@ -23,4 +27,13 @@
 }
 
 @layer utilities {
+  .title {
+    @apply text-xl font-semibold;
+  }
+  .title-lg {
+    @apply text-2xl font-semibold;
+  }
+  .box {
+    @apply p-5 overflow-hidden border shadow-sm rounded-2xl;
+  }
 }

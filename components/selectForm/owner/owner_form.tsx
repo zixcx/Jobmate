@@ -30,6 +30,13 @@ export default function OwnerForm() {
     const handleComplete = (data: Address) => {
         setAddress(data.address);
         setDetailAddress(data.buildingName);
+
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            address: data.address,
+            detail_address: data.buildingName,
+        }));
+
         closeModal();
     };
 
@@ -44,10 +51,10 @@ export default function OwnerForm() {
     useEffect(() => {
         const allFieldsFilled =
             formData.name !== "" &&
-            formData.store_name.length >= 2 &&
+            formData.store_name !== "" &&
             formData.address !== "" &&
             formData.detail_address !== "" &&
-            formData.phone.length >= 9;
+            formData.phone.length >= 10;
 
         setIsButtonVisible(allFieldsFilled);
     }, [formData]);

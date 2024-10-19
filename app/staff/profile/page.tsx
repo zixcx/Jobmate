@@ -33,7 +33,7 @@ export default async function StaffProfile() {
 
     return (
         <div className="flex flex-col items-center justify-center p-10">
-            <div className="relative mt-24 border-[0.5px] shadow border-neutral-200 w-64 h-72 flex flex-col justify-center items-center bg-neutral-100 rounded-xl">
+            <div className="relative mt-24 border-[0.5px] shadow w-64 h-96 flex flex-col justify-center items-center bg-white rounded-xl">
                 <Image
                     src={user?.avatar ?? "./assets/default_profile.jpg"} // avatar가 null일 경우 기본 이미지 사용
                     width={160}
@@ -53,12 +53,12 @@ export default async function StaffProfile() {
                 <span>
                     현재 근무 중인 알바 수: {user?.staff?.assignments.length}
                 </span>
+                <form action={logout}>
+                    <button type="submit" className="mt-5 btn">
+                        logout
+                    </button>
+                </form>
             </div>
-            <form action={logout}>
-                <button type="submit" className="mt-5 btn">
-                    logout
-                </button>
-            </form>
         </div>
     );
 }

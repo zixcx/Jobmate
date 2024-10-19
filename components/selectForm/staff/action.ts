@@ -40,7 +40,7 @@ const staffFormSchema = z.object({
     gender: z.enum(["M", "F"]),
 });
 
-export async function staffFormAction(_: any, formData: FormData) {
+export async function staffFormAction(_: unknown, formData: FormData) {
     const data = {
         name: formData.get("name"),
         birth_year: Number(formData.get("birth_year")),

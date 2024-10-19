@@ -3,11 +3,11 @@ import React from "react";
 
 export default function TapLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div>
-            {children}
-            <div className="md:hidden">
-                <TabBar />
+        <>
+            <div className="mb-[72px] h-[calc(100vh-72px)] overflow-y-auto">
+                {children}
             </div>
-        </div>
+            <TabBar />
+        </>
     );
 }

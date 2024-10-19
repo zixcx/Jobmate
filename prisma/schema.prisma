@@ -23,25 +23,17 @@ model User {
 }
 
 model Owner {
-  id     Int     @id @default(autoincrement())
-  user   User    @relation(fields: [userId], references: [id])
-  userId Int     @unique
-  stores Store[] // 사장님이 소유한 여러 가게
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-}
-
-model Store {
   id               Int               @id @default(autoincrement())
+  name             String
   store_name       String
-  store_tag        String            @default("") // 4자리 숫자 태그
+  store_tag        String
   address          String
-  detail_address   String
+  detail_address   String?
   phone            String            @unique
-  password         String // 랜덤 4자리 숫자 비밀번호
-  owner            Owner             @relation(fields: [ownerId], references: [id])
-  ownerId          Int
+  password         String // 초기값: 랜덤 4자리 숫자 비밀번호
+  theme_color      String? // 가게 테마 색
+  user             User              @relation(fields: [userId], references: [id])
+  userId           Int               @unique
   staffAssignments StaffAssignment[] // 해당 가게의 알바생 배정 정보
 
   created_at DateTime @default(now())
@@ -66,12 +58,12 @@ model StaffAssignment {
   id          Int    @id @default(autoincrement())
   staff       Staff  @relation(fields: [staffId], references: [id])
   staffId     Int
-  store       Store  @relation(fields: [storeId], references: [id])
-  storeId     Int
   hourly_wage Float // 시급
   role        String // 직무(직급, 업무)
   status      String @default("pending") // 사장님이 알바생 신청을 수락하거나 거절 (pending, accepted, rejected)
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  Owner      Owner?   @relation(fields: [ownerId], references: [id])
+  ownerId    Int?
 }

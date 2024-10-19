@@ -1,10 +1,9 @@
 "use client";
 import {
     HomeIcon,
-    ChatBubbleOvalLeftEllipsisIcon as ChatIcon,
     UserIcon,
-    WalletIcon,
     BuildingStorefrontIcon,
+    CalendarDaysIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -38,13 +37,13 @@ export default function TabBar() {
                 </span>
             </Link>
             <Link
-                href="/staff/wage"
+                href="/staff/schedule"
                 className="flex flex-col items-center gap-px"
             >
-                <WalletIcon
+                <CalendarDaysIcon
                     className={classNames(
                         "w-7 h-7",
-                        pathname === "/staff/wage"
+                        pathname === "/staff/schedule"
                             ? "text-black"
                             : "text-neutral-400"
                     )}
@@ -52,12 +51,12 @@ export default function TabBar() {
                 <span
                     className={classNames(
                         "text-xs",
-                        pathname === "/staff/wage"
+                        pathname === "/staff/schedule"
                             ? "text-black"
                             : "text-neutral-400"
                     )}
                 >
-                    급여
+                    일정
                 </span>
             </Link>
             <Link

@@ -66,7 +66,7 @@ export default function TimeTable() {
     };
 
     return (
-        <div className="grid w-full h-full max-w-md grid-cols-7 divide-x">
+        <div className="grid w-full h-full max-w-md grid-cols-7 mx-auto divide-x">
             {Object.keys(weekdayMapping).map((key) => (
                 <div
                     key={key}

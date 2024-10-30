@@ -43,18 +43,16 @@ const staffFormSchema = z.object({
 export async function staffFormAction(_: unknown, formData: FormData) {
     const data = {
         name: formData.get("name"),
-        birth_year: Number(formData.get("birth_year")),
+        birth_year: parseInt(formData.get("birth_year") as string, 10),
         phone: formData.get("phone"),
-        gender: formData.get("gender") === "M" ? "M" : "F",
+        gender: formData.get("gender"),
     };
 
-    // 1. 스키마 검증
     const result = await staffFormSchema.safeParseAsync(data);
 
     if (!result.success) {
         return result.error.flatten();
     } else {
-        // 2. 세션에서 현재 사용자의 ID 가져오기
         const session = await getSession();
         const userId = session.id;
 
@@ -62,23 +60,29 @@ export async function staffFormAction(_: unknown, formData: FormData) {
             throw new Error("사용자 ID를 찾을 수 없습니다.");
         }
 
-        // 3. Staff 생성
-        const user = await db.staff.create({
+        // 이미 Staff가 존재하는지 확인
+        const existingStaff = await db.staff.findUnique({
+            where: { userId },
+        });
+
+        if (existingStaff) {
+            throw new Error("이미 알바생 정보가 존재합니다.");
+        }
+
+        // 새로운 Staff 생성
+        const staff = await db.staff.create({
             data: {
                 name: result.data.name,
                 birth_year: result.data.birth_year,
                 phone: result.data.phone,
                 gender: result.data.gender,
                 user: {
-                    connect: { id: userId }, // 현재 로그인한 사용자와 연결
+                    connect: { id: userId },
                 },
-            },
-            select: {
-                id: true,
             },
         });
 
-        // 4. 리디렉션
+        // 리디렉션 또는 성공 응답
         redirect("/staff/home");
     }
 }

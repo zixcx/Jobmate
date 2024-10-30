@@ -36,4 +36,7 @@
   .box {
     @apply p-5 overflow-hidden border shadow-sm rounded-2xl;
   }
+  .safearea {
+    @apply w-full h-[calc(100vh-72px)];
+  }
 }

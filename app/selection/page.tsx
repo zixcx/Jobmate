@@ -10,8 +10,9 @@ import {
     IdentificationIcon,
 } from "@heroicons/react/24/solid";
 import classNames from "classnames";
+import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Selection() {
     const router = useRouter();
@@ -20,19 +21,19 @@ export default function Selection() {
     const [rememberChoice, setRememberChoice] = useState(true); // 선택 항목 기억하기 상태
 
     // 선택 항목 기억하기를 위해 localStorage에서 값 불러오기
-    // useEffect(() => {
-    //     const savedChoice = localStorage.getItem("ownerOrStaff");
-    //     if (savedChoice) {
-    //         setOwnerOrStaff(savedChoice);
-    //     }
-    // }, []);
+    useEffect(() => {
+        const savedChoice = localStorage.getItem("ownerOrStaff");
+        if (savedChoice) {
+            setOwnerOrStaff(savedChoice);
+        }
+    }, []);
 
     // 선택 항목 저장
-    // useEffect(() => {
-    //     if (rememberChoice && ownerOrStaff) {
-    //         localStorage.setItem("ownerOrStaff", ownerOrStaff);
-    //     }
-    // }, [ownerOrStaff, rememberChoice]);
+    useEffect(() => {
+        if (rememberChoice && ownerOrStaff) {
+            localStorage.setItem("ownerOrStaff", ownerOrStaff);
+        }
+    }, [ownerOrStaff, rememberChoice]);
 
     const selectStaff = () => {
         setOwnerOrStaff("staff");

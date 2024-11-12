@@ -53,7 +53,7 @@ export default function Modal({
             <div
                 id="backdrop"
                 onClick={handleClose} // 닫기 함수를 호출
-                className="w-full h-full absolute top-0 left-0 z-[999] bg-black opacity-30"
+                className="w-full h-full absolute top-0 left-0 z-[999] bg-black/30 backdrop-blur-md"
             />
 
             {/* Modal Content */}

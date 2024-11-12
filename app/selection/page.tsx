@@ -10,12 +10,27 @@ import {
     IdentificationIcon,
 } from "@heroicons/react/24/solid";
 import classNames from "classnames";
-import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Selection() {
     const router = useRouter();
+
+    useEffect(() => {
+        async function checkUserRole() {
+            const res = await fetch("/api/check_role"); // 역할 확인 API 호출
+            const data = await res.json();
+
+            if (data.roles.includes("STAFF")) {
+                router.push("/staff/home");
+            } else if (data.roles.includes("OWNER")) {
+                router.push("/owner/home");
+            }
+        }
+
+        checkUserRole();
+    }, [router]);
+
     const [ownerOrStaff, setOwnerOrStaff] = useState("");
     const [sectionIndex, setSectionIndex] = useState(0); // 섹션 인덱스 상태 추가
     const [rememberChoice, setRememberChoice] = useState(true); // 선택 항목 기억하기 상태

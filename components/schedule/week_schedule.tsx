@@ -3,14 +3,13 @@ import {
     ChevronDownIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
-    ChevronUpIcon,
     Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 import dayjs from "dayjs";
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 import isoWeek from "dayjs/plugin/isoWeek";
 import Link from "next/link";
+
 dayjs.extend(isoWeek);
 
 export default function WeekSchedule() {
@@ -18,12 +17,22 @@ export default function WeekSchedule() {
     const [selectedCol, setSelectedCol] = useState<number>(dayjs().day());
     const [isShowDateSelector, setIsShowDateSelector] = useState(false);
     const [currentDate, setCurrentDate] = useState(nowDate);
+    const [displayedMonth, setDisplayedMonth] = useState(nowDate);
+    const [dateSelectorMode, setDateSelectorMode] = useState<
+        "CAL" | "YEAR" | "MONTH"
+    >("CAL");
 
     const dateSelectorToggle = () => setIsShowDateSelector(!isShowDateSelector);
 
+    useEffect(() => {
+        if (isShowDateSelector) {
+            setDisplayedMonth(currentDate); // dateSelector가 열릴 때 현재 연월을 표시
+        }
+    }, [isShowDateSelector, currentDate]);
+
     // 7일간의 날짜 배열 계산
-    const getWeekDates = (date: any) => {
-        const startOfWeek = date.startOf("week"); // 일요일부터 시작
+    const getWeekDates = (date: dayjs.Dayjs) => {
+        const startOfWeek = date.startOf("week");
         const dates = [];
         for (let i = 0; i < 7; i++) {
             dates.push(startOfWeek.add(i, "day"));
@@ -41,29 +50,36 @@ export default function WeekSchedule() {
         setCurrentDate(currentDate.add(1, "week"));
     };
 
-    const getMonthLabel = () => {
-        const selectedDay = weekDates[selectedCol];
-        const isNextMonth =
-            selectedDay.month() !== currentDate.month() &&
-            selectedDay.month() > currentDate.month();
-        const isPreviousMonth =
-            selectedDay.month() !== currentDate.month() &&
-            selectedDay.month() < currentDate.month();
-        if (isNextMonth) {
-            return `${selectedDay.year()}년 ${selectedDay.month() + 1}월`;
-        }
-        if (isPreviousMonth) {
-            return `${selectedDay.year()}년 ${selectedDay.month() + 1}월`;
-        }
-        return `${currentDate.year()}년 ${currentDate.month() + 1}월`;
-    };
-
     const today = dayjs();
 
-    // dateSelector
-    const [dateSelectorMode, setDateSelectorMode] = useState<
-        "CAL" | "YEAR" | "MONTH"
-    >("CAL");
+    // 연도 선택
+    const selectYear = (year: number) => {
+        setDisplayedMonth(displayedMonth.year(year));
+        setDateSelectorMode("MONTH");
+    };
+
+    // 월 선택
+    const selectMonth = (month: number) => {
+        setDisplayedMonth(displayedMonth.month(month - 1));
+        setDateSelectorMode("CAL");
+    };
+
+    // 특정 날짜 선택 시 해당 주로 이동
+    const handleDayClick = (date: dayjs.Dayjs) => {
+        setCurrentDate(date.startOf("week"));
+        setSelectedCol(date.day());
+        setIsShowDateSelector(false);
+    };
+
+    // 다음 달로 이동
+    const goToNextMonth = () => {
+        setDisplayedMonth(displayedMonth.add(1, "month"));
+    };
+
+    // 이전 달로 이동
+    const goToPreviousMonth = () => {
+        setDisplayedMonth(displayedMonth.subtract(1, "month"));
+    };
 
     return (
         <>
@@ -73,7 +89,9 @@ export default function WeekSchedule() {
                         onClick={dateSelectorToggle}
                         className="flex items-center gap-1 p-2 select-none rounded-xl hover:bg-neutral-100"
                     >
-                        <span>{getMonthLabel()}</span>
+                        <span>{`${currentDate.year()}년 ${
+                            currentDate.month() + 1
+                        }월`}</span>
                         <ChevronDownIcon
                             width={20}
                             className={`${
@@ -89,162 +107,146 @@ export default function WeekSchedule() {
                         />
                     </button>
                 </div>
+
                 {isShowDateSelector && (
-                    <div className="flex flex-col w-full gap-3 px-10 box bg-neutral-100">
-                        <div className="flex justify-center gap-2">
-                            <button className="px-2 rounded-lg hover:bg-neutral-200">
-                                <ChevronLeftIcon width={20} />
+                    <div className="flex flex-col w-full gap-3 px-10 box bg-neutral-100/65">
+                        {/* 연도 및 월 선택 */}
+                        <div className="flex items-center justify-around">
+                            {/* 이전달 이동 버튼 */}
+                            <button
+                                onClick={goToPreviousMonth}
+                                className="flex items-center justify-center bg-white rounded-full cursor-pointer size-10 hover:bg-neutral-200"
+                            >
+                                <ChevronLeftIcon
+                                    width={20}
+                                    style={{ strokeWidth: "2" }}
+                                />
                             </button>
                             <div className="flex justify-center gap-2">
                                 <button
                                     onClick={() => setDateSelectorMode("YEAR")}
-                                    className="px-4 py-2 bg-white rounded-lg hover:bg-neutral-200"
+                                    className="relative px-4 py-2 font-semibold bg-white rounded-lg hover:bg-neutral-200"
                                 >
-                                    2024년
+                                    {displayedMonth.year()}년
+                                    <div className="absolute border-b-[6px] border-l-[6px] border-sky-800 bottom-1.5 right-1.5 border-l-transparent" />
                                 </button>
                                 <button
                                     onClick={() => setDateSelectorMode("MONTH")}
-                                    className="px-4 py-2 bg-white rounded-lg hover:bg-neutral-200"
+                                    className="relative px-4 py-2 font-semibold bg-white rounded-lg hover:bg-neutral-200"
                                 >
-                                    10월
+                                    {displayedMonth.month() + 1}월
+                                    <div className="absolute border-b-[6px] border-l-[6px] border-sky-800 bottom-1.5 right-1.5 border-l-transparent" />
                                 </button>
                             </div>
-                            <button className="px-2 rounded-lg hover:bg-neutral-200">
-                                <ChevronRightIcon width={20} />
+                            {/* 다음달 이동 버튼 */}
+                            <button
+                                onClick={goToNextMonth}
+                                className="flex items-center justify-center bg-white rounded-full cursor-pointer size-10 hover:bg-neutral-200"
+                            >
+                                <ChevronRightIcon
+                                    width={20}
+                                    style={{ strokeWidth: "2" }}
+                                />
                             </button>
                         </div>
+
+                        {dateSelectorMode === "YEAR" && (
+                            <div className="flex flex-wrap justify-center gap-2">
+                                {[2020, 2021, 2022, 2023, 2024, 2025].map(
+                                    (year) => (
+                                        <button
+                                            key={year}
+                                            onClick={() => selectYear(year)}
+                                            className="w-24 h-10 bg-white rounded-lg hover:bg-neutral-200"
+                                        >
+                                            {year}년
+                                        </button>
+                                    )
+                                )}
+                            </div>
+                        )}
+
+                        {dateSelectorMode === "MONTH" && (
+                            <div className="flex flex-wrap justify-center gap-2">
+                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(
+                                    (month) => (
+                                        <button
+                                            key={month}
+                                            onClick={() => selectMonth(month)}
+                                            className="w-16 h-10 bg-white rounded-lg hover:bg-neutral-200"
+                                        >
+                                            {month}월
+                                        </button>
+                                    )
+                                )}
+                            </div>
+                        )}
+
                         {dateSelectorMode === "CAL" && (
                             <div className="flex flex-col items-center justify-center w-full gap-2">
-                                <div className="flex items-center gap-1 justify-center w-full *:flex *:justify-center *:items-center *:text-center *:w-10 select-none">
-                                    <span>일</span>
-                                    <span>월</span>
-                                    <span>화</span>
-                                    <span>수</span>
-                                    <span>목</span>
-                                    <span>금</span>
-                                    <span>토</span>
-                                </div>
-
-                                <div className="flex flex-col items-center justify-center w-full gap-1">
-                                    <div className="flex items-center justify-center w-full *:flex *:justify-center *:items-center *:text-center *:size-10 gap-1 *:bg-white *:rounded-lg *:cursor-pointer hover:*:scale-105 *:transition">
-                                        <span>29</span>
-                                        <span>30</span>
-                                        <span>1</span>
-                                        <span>2</span>
-                                        <span>3</span>
-                                        <span>4</span>
-                                        <span>5</span>
-                                    </div>
-                                    <div className="flex items-center justify-center w-full *:flex *:justify-center *:items-center *:text-center *:size-10 gap-1 *:bg-white *:rounded-lg *:cursor-pointer hover:*:scale-105 *:transition">
-                                        <span>6</span>
-                                        <span>7</span>
-                                        <span>8</span>
-                                        <span>9</span>
-                                        <span>10</span>
-                                        <span>11</span>
-                                        <span>12</span>
-                                    </div>
-                                    <div className="flex items-center justify-center w-full *:flex *:justify-center *:items-center *:text-center *:size-10 gap-1 *:bg-white *:rounded-lg *:cursor-pointer hover:*:scale-105 *:transition">
-                                        <span>13</span>
-                                        <span>14</span>
-                                        <span>15</span>
-                                        <span>16</span>
-                                        <span>17</span>
-                                        <span>18</span>
-                                        <span>19</span>
-                                    </div>
-                                    <div className="flex items-center justify-center w-full *:flex *:justify-center *:items-center *:text-center *:size-10 gap-1 *:bg-white *:rounded-lg *:cursor-pointer hover:*:scale-105 *:transition">
-                                        <span>20</span>
-                                        <span>21</span>
-                                        <span>22</span>
-                                        <span>23</span>
-                                        <span className="!bg-sky-200/60">
-                                            24
+                                <div className="flex items-center justify-center w-full gap-1">
+                                    {[
+                                        "일",
+                                        "월",
+                                        "화",
+                                        "수",
+                                        "목",
+                                        "금",
+                                        "토",
+                                    ].map((day, idx) => (
+                                        <span
+                                            key={idx}
+                                            className="w-10 text-center"
+                                        >
+                                            {day}
                                         </span>
-                                        <span>25</span>
-                                        <span>26</span>
+                                    ))}
+                                </div>
+                                {[...Array(5)].map((_, weekIdx) => (
+                                    <div
+                                        key={weekIdx}
+                                        className="flex items-center justify-center w-full gap-1"
+                                    >
+                                        {[...Array(7)].map((_, dayIdx) => {
+                                            const date = displayedMonth
+                                                .startOf("month")
+                                                .startOf("week")
+                                                .add(
+                                                    weekIdx * 7 + dayIdx,
+                                                    "day"
+                                                );
+                                            const isToday = date.isSame(
+                                                today,
+                                                "day"
+                                            );
+                                            const isCurrentMonth =
+                                                date.month() ===
+                                                displayedMonth.month();
+                                            return (
+                                                <button
+                                                    key={dayIdx}
+                                                    onClick={() =>
+                                                        handleDayClick(date)
+                                                    }
+                                                    className={`size-10 rounded-lg ${
+                                                        isToday
+                                                            ? "bg-sky-200/30"
+                                                            : isCurrentMonth
+                                                            ? "bg-white hover:bg-neutral-200"
+                                                            : "bg-neutral-200/50 text-neutral-400"
+                                                    }`}
+                                                >
+                                                    {date.date()}
+                                                </button>
+                                            );
+                                        })}
                                     </div>
-                                    <div className="flex items-center justify-center w-full *:flex *:justify-center *:items-center *:text-center *:size-10 gap-1 *:bg-white *:rounded-lg *:cursor-pointer hover:*:scale-105 *:transition">
-                                        <span>27</span>
-                                        <span>28</span>
-                                        <span>29</span>
-                                        <span>30</span>
-                                        <span>31</span>
-                                        <span>1</span>
-                                        <span>2</span>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                        {dateSelectorMode === "YEAR" && (
-                            <div className="flex flex-col items-center justify-center gap-2">
-                                <button className="flex justify-center w-full pt-1">
-                                    <ChevronUpIcon width={20} />
-                                </button>
-                                <div className="flex items-center justify-center gap-2">
-                                    <button className="w-24 h-10 transition bg-white rounded-lg min-w-24 hover:scale-105">
-                                        2020년
-                                    </button>
-                                    <button className="w-24 h-10 transition bg-white rounded-lg min-w-24 hover:scale-105">
-                                        2021년
-                                    </button>
-                                    <button className="w-24 h-10 transition bg-white rounded-lg min-w-24 hover:scale-105">
-                                        2022년
-                                    </button>
-                                </div>
-                                <div className="flex items-center justify-center gap-2">
-                                    <button className="w-24 h-10 transition bg-white rounded-lg min-w-24 hover:scale-105">
-                                        2023년
-                                    </button>
-                                    <button className="w-24 h-10 transition rounded-lg bg-sky-200/60 min-w-24 hover:scale-105">
-                                        2024년
-                                    </button>
-                                    <button className="w-24 h-10 transition bg-white rounded-lg min-w-24 hover:scale-105">
-                                        2025년
-                                    </button>
-                                </div>
-                                <div className="flex items-center justify-center gap-2">
-                                    <button className="w-24 h-10 transition bg-white rounded-lg min-w-24 hover:scale-105">
-                                        2026년
-                                    </button>
-                                    <button className="w-24 h-10 transition bg-white rounded-lg min-w-24 hover:scale-105">
-                                        2027년
-                                    </button>
-                                    <button className="w-24 h-10 transition bg-white rounded-lg min-w-24 hover:scale-105">
-                                        2028년
-                                    </button>
-                                </div>
-                                <button className="flex justify-center w-full pb-1">
-                                    <ChevronDownIcon width={20} />
-                                </button>
-                            </div>
-                        )}
-                        {dateSelectorMode === "MONTH" && (
-                            <div className="flex flex-col items-center justify-center w-full gap-2">
-                                <div className="flex items-center justify-center gap-2 *:rounded-lg *:h-10 *:w-16 *:min-w-16 *:bg-white hover:*:scale-105 *:transition">
-                                    <button>1월</button>
-                                    <button>2월</button>
-                                    <button>3월</button>
-                                    <button>4월</button>
-                                </div>
-                                <div className="flex items-center justify-center gap-2 *:rounded-lg *:h-10 *:w-16 *:min-w-16 *:bg-white hover:*:scale-105 *:transition">
-                                    <button>5월</button>
-                                    <button>6월</button>
-                                    <button>7월</button>
-                                    <button>8월</button>
-                                </div>
-                                <div className="flex items-center justify-center gap-2 *:rounded-lg *:h-10 *:w-16 *:min-w-16 *:bg-white hover:*:scale-105 *:transition">
-                                    <button>9월</button>
-                                    <button className="!bg-sky-200/70">
-                                        10월
-                                    </button>
-                                    <button>11월</button>
-                                    <button>12월</button>
-                                </div>
+                                ))}
                             </div>
                         )}
                     </div>
                 )}
+
                 <div className="flex justify-between gap-1">
                     {/* 이전주 보기 버튼 */}
                     <button
@@ -318,9 +320,6 @@ export default function WeekSchedule() {
                             일정 추가하기
                         </Link>
                     </div>
-                    {/* <div className="w-full">
-                        <ScheduleItem />
-                    </div> */}
                 </div>
             </div>
         </>

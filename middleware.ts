@@ -1,3 +1,4 @@
+// middleware.ts
 import { NextRequest, NextResponse } from "next/server";
 import getSession from "./lib/session";
 
@@ -13,23 +14,19 @@ const publicUrls = new Set([
 
 export async function middleware(request: NextRequest) {
     const session = await getSession();
-
     const exists = publicUrls.has(request.nextUrl.pathname);
-    if (!session.id) {
-        if (!exists) {
-            return NextResponse.redirect(new URL("/", request.url));
-        }
-    } else {
-        if (request.nextUrl.pathname === "/join") {
-            return NextResponse.redirect(new URL("/selection", request.url));
-        }
+
+    // 로그인 여부만 확인
+    if (!session.id && !exists) {
+        return NextResponse.redirect(new URL("/", request.url));
     }
-    // ???
-    // else {
-    //     if (exists) {
-    //         return NextResponse.redirect(new URL("/select", request.url));
-    //     }
-    // }
+
+    // 로그인한 사용자는 selection으로 리디렉션
+    if (session.id && request.nextUrl.pathname === "/join") {
+        return NextResponse.redirect(new URL("/selection", request.url));
+    }
+
+    return NextResponse.next();
 }
 
 export const config = {

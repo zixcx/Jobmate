@@ -13,8 +13,6 @@ import { z } from "zod";
 
 // 정규식: 한글만, 공백 허용
 const koreanOnlyRegex = /^[가-힣\s]+$/;
-
-// 정규식: 공백 불가
 const noWhitespaceRegex = /^\S+$/;
 
 const checkNameRegex = (name: string) =>
@@ -48,11 +46,13 @@ export async function staffFormAction(_: unknown, formData: FormData) {
         gender: formData.get("gender"),
     };
 
+    // 1. 스키마 검증
     const result = await staffFormSchema.safeParseAsync(data);
 
     if (!result.success) {
         return result.error.flatten();
     } else {
+        // 2. 세션에서 현재 사용자의 ID 가져오기
         const session = await getSession();
         const userId = session.id;
 
@@ -60,7 +60,7 @@ export async function staffFormAction(_: unknown, formData: FormData) {
             throw new Error("사용자 ID를 찾을 수 없습니다.");
         }
 
-        // 이미 Staff가 존재하는지 확인
+        // 3. 이미 Staff가 존재하는지 확인
         const existingStaff = await db.staff.findUnique({
             where: { userId },
         });
@@ -69,8 +69,8 @@ export async function staffFormAction(_: unknown, formData: FormData) {
             throw new Error("이미 알바생 정보가 존재합니다.");
         }
 
-        // 새로운 Staff 생성
-        const staff = await db.staff.create({
+        // 4. 새로운 Staff 생성
+        await db.staff.create({
             data: {
                 name: result.data.name,
                 birth_year: result.data.birth_year,
@@ -82,7 +82,7 @@ export async function staffFormAction(_: unknown, formData: FormData) {
             },
         });
 
-        // 리디렉션 또는 성공 응답
+        // 5. 리디렉션
         redirect("/staff/home");
     }
 }

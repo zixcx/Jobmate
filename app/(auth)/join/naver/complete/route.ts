@@ -1,3 +1,4 @@
+// /join/naver/complete/route.ts
 import socialAuth from "@/lib/auth/socialAuth";
 import { NextRequest, NextResponse } from "next/server";
 import { loginSession } from "@/lib/session";
@@ -15,7 +16,6 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        // 1. 네이버로부터 토큰 받기
         const token = await socialAuth.getNaverToken(code, state);
 
         if (!token) {
@@ -23,7 +23,6 @@ export async function GET(request: NextRequest) {
             return new Response("Authentication failed", { status: 401 });
         }
 
-        // 2. 토큰을 사용해 네이버 API에서 사용자 정보 가져오기
         const userInfoResponse = await fetch(
             "https://openapi.naver.com/v1/nid/me",
             {
@@ -47,7 +46,7 @@ export async function GET(request: NextRequest) {
 
         const userInfo = userInfoData.response;
         const naverId = userInfo.id;
-        const username = userInfo.nickname || "unknown"; // 기본 사용자 이름 설정
+        const username = userInfo.nickname || "unknown";
         const avatar = userInfo.profile_image || "";
 
         if (!naverId) {
@@ -57,7 +56,6 @@ export async function GET(request: NextRequest) {
             });
         }
 
-        // 3. DB에서 사용자를 확인
         let user = await db.user.findUnique({
             where: {
                 naver_id: naverId.toString(),
@@ -65,7 +63,6 @@ export async function GET(request: NextRequest) {
         });
 
         if (!user) {
-            // username이 이미 존재하는지 확인
             let finalUsername = `${username}_naver`;
             const existingUser = await db.user.findUnique({
                 where: {
@@ -73,14 +70,12 @@ export async function GET(request: NextRequest) {
                 },
             });
 
-            // 동일한 이름이 있는 경우 이름을 고유하게 수정
             if (existingUser) {
                 finalUsername = `${username}${crypto
                     .randomBytes(4)
                     .toString("hex")}_naver`;
             }
 
-            // 새로운 사용자 생성
             user = await db.user.create({
                 data: {
                     naver_id: naverId.toString(),
@@ -90,7 +85,6 @@ export async function GET(request: NextRequest) {
             });
         }
 
-        // 4. 세션에 사용자 ID 저장
         await loginSession(user.id);
 
         return NextResponse.redirect(new URL("/selection", request.url));

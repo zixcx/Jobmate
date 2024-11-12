@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 
 export default async function StaffProfile() {
     const session = await getSession();
+
+    // 세션의 사용자 ID를 이용해 Staff 프로필 정보를 가져옴
     const user = await db.user.findUnique({
         where: {
             id: session.id,
@@ -18,7 +20,11 @@ export default async function StaffProfile() {
                     birth_year: true,
                     phone: true,
                     gender: true,
-                    assignments: true,
+                    assignments: {
+                        select: {
+                            id: true,
+                        },
+                    },
                 },
             },
         },
@@ -56,7 +62,7 @@ export default async function StaffProfile() {
                     <span>휴대폰 번호: {user?.staff?.phone}</span>
                     <span>
                         현재 근무 중인 알바 수:{" "}
-                        {user?.staff?.assignments.length}
+                        {user?.staff?.assignments?.length ?? 0}
                     </span>
                     <form action={logout}>
                         <button type="submit" className="mt-5 btn">

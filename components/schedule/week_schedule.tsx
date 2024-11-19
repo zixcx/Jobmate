@@ -8,7 +8,7 @@ import {
 import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 import isoWeek from "dayjs/plugin/isoWeek";
-import Link from "next/link";
+import Modal from "../modal/modal";
 
 dayjs.extend(isoWeek);
 
@@ -80,6 +80,8 @@ export default function WeekSchedule() {
     const goToPreviousMonth = () => {
         setDisplayedMonth(displayedMonth.subtract(1, "month"));
     };
+
+    const [showModal, setShowModal] = useState(false);
 
     return (
         <>
@@ -316,12 +318,23 @@ export default function WeekSchedule() {
                             <span>일정이 없습니다.</span>
                             <span>일정을 추가해 보세요!</span>
                         </div>
-                        <Link href={"/staff/schedule/add"} className="btn">
+                        <button
+                            onClick={() => setShowModal(true)}
+                            className="btn"
+                        >
                             일정 추가하기
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </div>
+            {showModal && (
+                <Modal
+                    onClose={() => setShowModal(false)}
+                    closeButtonVisible
+                    width="450px"
+                    height="650px"
+                />
+            )}
         </>
     );
 }

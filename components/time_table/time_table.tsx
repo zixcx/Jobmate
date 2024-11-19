@@ -1,6 +1,11 @@
+"use client";
+
 import { getContrastYIQ } from "@/lib/textColor";
+import { PlusIcon } from "@heroicons/react/24/outline";
 import dayjs from "dayjs";
 import minMax from "dayjs/plugin/minMax";
+import Modal from "../modal/modal";
+import { useState } from "react";
 dayjs.extend(minMax);
 
 export default function TimeTable() {
@@ -65,64 +70,91 @@ export default function TimeTable() {
         SAT: "토",
     };
 
+    const [showModal, setShowModal] = useState(false);
+
     return (
-        <div className="grid w-full h-full max-w-md grid-cols-7 mx-auto divide-x">
-            {Object.keys(weekdayMapping).map((key) => (
-                <div
-                    key={key}
-                    className="grid grid-rows-[auto,1fr] divide-y h-full overflow-hidden"
+        <>
+            {showModal && (
+                <Modal
+                    onClose={() => setShowModal(false)}
+                    width="450px"
+                    height="650px"
+                    closeButtonVisible
+                ></Modal>
+            )}
+            <div className="w-full flex justify-between items-center">
+                <span className="title">시간표</span>
+                <button
+                    onClick={() => setShowModal(true)}
+                    className="p-2 hover:bg-neutral-100 rounded-lg active:bg-neutral-200"
                 >
-                    <div className="text-center bg-neutral-50">
-                        {weekdayMapping[key]}
-                    </div>
-                    <div className="relative h-full">
-                        {events
-                            .filter((event) => event.weekday === key)
-                            .map((event, eventIndex) => (
-                                <div
-                                    key={eventIndex}
-                                    className="absolute left-0 right-0 flex flex-col items-center justify-start before:z-50"
-                                    style={{
-                                        top:
-                                            (event.start.diff(
-                                                start_time,
-                                                "minute"
-                                            ) /
-                                                table_len) *
-                                                100 +
-                                            "%",
-                                        height:
-                                            (event.end.diff(
-                                                event.start,
-                                                "minute"
-                                            ) /
-                                                table_len) *
-                                                100 +
-                                            "%",
-                                        backgroundColor: event.bg_color,
-                                        color: getContrastYIQ(event.bg_color),
-                                    }}
-                                >
-                                    <span className="font-medium">
-                                        {event.title}
-                                    </span>
-                                    <span className="flex flex-col items-start justify-center text-sm">
-                                        <span className="text-xs">
-                                            시작
-                                            <span className="">
-                                                {event.start.format("HH:mm")}
+                    <PlusIcon width={20} style={{ strokeWidth: "1.75" }} />
+                </button>
+            </div>
+            <div className="w-full max-w-md h-[512px] border rounded-md overflow-hidden flex justify-center items-center">
+                <div className="grid w-full h-full max-w-md grid-cols-7 mx-auto divide-x">
+                    {Object.keys(weekdayMapping).map((key) => (
+                        <div
+                            key={key}
+                            className="grid grid-rows-[auto,1fr] divide-y h-full overflow-hidden"
+                        >
+                            <div className="text-center bg-neutral-50">
+                                {weekdayMapping[key]}
+                            </div>
+                            <div className="relative h-full">
+                                {events
+                                    .filter((event) => event.weekday === key)
+                                    .map((event, eventIndex) => (
+                                        <div
+                                            key={eventIndex}
+                                            className="absolute left-0 right-0 flex flex-col items-center justify-start before:z-50"
+                                            style={{
+                                                top:
+                                                    (event.start.diff(
+                                                        start_time,
+                                                        "minute"
+                                                    ) /
+                                                        table_len) *
+                                                        100 +
+                                                    "%",
+                                                height:
+                                                    (event.end.diff(
+                                                        event.start,
+                                                        "minute"
+                                                    ) /
+                                                        table_len) *
+                                                        100 +
+                                                    "%",
+                                                backgroundColor: event.bg_color,
+                                                color: getContrastYIQ(
+                                                    event.bg_color
+                                                ),
+                                            }}
+                                        >
+                                            <span className="font-medium">
+                                                {event.title}
                                             </span>
-                                        </span>
-                                        <span className="text-xs">
-                                            종료
-                                            {event.end.format("HH:mm")}
-                                        </span>
-                                    </span>
-                                </div>
-                            ))}
-                    </div>
+                                            <span className="flex flex-col items-start justify-center text-sm">
+                                                <span className="text-xs">
+                                                    시작
+                                                    <span className="">
+                                                        {event.start.format(
+                                                            "HH:mm"
+                                                        )}
+                                                    </span>
+                                                </span>
+                                                <span className="text-xs">
+                                                    종료
+                                                    {event.end.format("HH:mm")}
+                                                </span>
+                                            </span>
+                                        </div>
+                                    ))}
+                            </div>
+                        </div>
+                    ))}
                 </div>
-            ))}
-        </div>
+            </div>
+        </>
     );
 }

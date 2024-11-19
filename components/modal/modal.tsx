@@ -2,7 +2,7 @@
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { useLockBodyScroll } from "@uidotdev/usehooks";
 import { useEffect, useState } from "react";
-import { useTransition, animated, config } from "react-spring";
+import { useTransition, animated } from "react-spring";
 
 interface ModalProps {
     onClose: () => void;

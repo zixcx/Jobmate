@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useTransition, animated } from "react-spring";
 
 interface Store {
-    id: number;
+    id: string;
     store_name: string;
     store_tag: string;
     owner_name: string;

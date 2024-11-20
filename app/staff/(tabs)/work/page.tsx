@@ -1,16 +1,17 @@
 "use client";
-import { useState, useCallback } from "react";
+
+import { useCallback, useState } from "react";
 import SearchInput from "@/components/search_input";
 import StoreCarousel from "@/components/store_carousel";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import TimeTable from "@/components/time_table/time_table";
-import { getStores } from "./action";
+import { getStores, applyForStore } from "./action";
 import Modal from "@/components/modal/modal";
 import StoreCard from "@/components/store_card";
 import { debounce } from "lodash";
 
 interface Store {
-    id: number;
+    id: string;
     store_name: string;
     store_tag: string;
     owner_name: string;
@@ -26,7 +27,6 @@ export default function StaffWork() {
     const [showModal, setShowModal] = useState(false);
     const [noResults, setNoResults] = useState(false);
 
-    // 디바운싱된 검색 함수
     const handleSearch = useCallback(
         debounce(async (query: string) => {
             const trimmedQuery = query.trim();
@@ -48,6 +48,19 @@ export default function StaffWork() {
         const value = e.target.value;
         setSearchQuery(value);
         handleSearch(value);
+    };
+
+    const handleApply = async (storeId: string) => {
+        try {
+            const response = await applyForStore(storeId);
+            alert(response.message);
+            // Remove the applied store from the searchedStores list
+            setSearchedStores((prevStores) =>
+                prevStores.filter((store) => store.id !== storeId)
+            );
+        } catch (error) {
+            alert("가입 신청 중 오류가 발생했습니다.");
+        }
     };
 
     return (
@@ -98,21 +111,21 @@ export default function StaffWork() {
                                             </span>
                                         </div>
                                     )}
-                                    {searchQuery.trim() !== "" &&
-                                        searchedStores.length > 0 && (
-                                            <div className="flex flex-col gap-2 mt-4">
-                                                {searchedStores.map((store) => (
-                                                    <StoreCard
-                                                        key={store.id}
-                                                        {...store}
-                                                        store_detail_address={
-                                                            store.store_detail_address ||
-                                                            ""
-                                                        }
-                                                    />
-                                                ))}
-                                            </div>
-                                        )}
+                                    {searchedStores.length > 0 && (
+                                        <div className="flex flex-col gap-2 mt-4">
+                                            {searchedStores.map((store) => (
+                                                <StoreCard
+                                                    key={store.id}
+                                                    {...store}
+                                                    store_detail_address={
+                                                        store.store_detail_address ||
+                                                        ""
+                                                    }
+                                                    onApply={handleApply}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
                                     {searchQuery.trim() !== "" && noResults && (
                                         <div className="text-center text-sm text-neutral-400 mt-4">
                                             검색 결과가 없습니다. 😥

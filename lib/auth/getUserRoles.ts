@@ -1,15 +1,11 @@
-import { NextResponse } from "next/server";
 import db from "@/lib/db";
 import getSession from "@/lib/session";
 
-export async function GET() {
+export async function getUserRoles() {
     const session = await getSession();
 
     if (!session.id) {
-        return NextResponse.json(
-            { error: "Not authenticated" },
-            { status: 401 }
-        );
+        throw new Error("Not authenticated");
     }
 
     const user = await db.user.findUnique({
@@ -21,5 +17,5 @@ export async function GET() {
     if (user?.owner) roles.push("OWNER");
     if (user?.staff) roles.push("STAFF");
 
-    return NextResponse.json({ roles });
+    return roles;
 }

@@ -7,7 +7,7 @@ import {
     CalendarIcon,
     UserGroupIcon,
     UserIcon,
-    ArrowRightOnRectangleIcon,
+    ArrowRightStartOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { redirect } from "next/navigation";
@@ -71,19 +71,17 @@ export default async function StaffProfile() {
                         </h2>
                         <div className="grid md:grid-cols-2 gap-6">
                             <div className="space-y-4">
-                                <div className="flex items-center text-neutral-600">
-                                    <CalendarIcon className="w-5 h-5 mr-3 text-neutral-500" />
+                                <div className="flex items-center text-neutral-600 gap-4">
+                                    <CalendarIcon className="w-5 h-5 text-neutral-500" />
                                     <div>
-                                        <p className="font-medium">
-                                            태어난 연도
-                                        </p>
+                                        <p className="font-bold">태어난 연도</p>
                                         <p>{user?.staff?.birth_year}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center text-neutral-600">
-                                    <UserIcon className="w-5 h-5 mr-3 text-neutral-500" />
+                                <div className="flex items-center text-neutral-600 gap-4">
+                                    <UserIcon className="w-5 h-5 text-neutral-500" />
                                     <div>
-                                        <p className="font-medium">나이</p>
+                                        <p className="font-bold">나이</p>
                                         <p>
                                             {calculateAge(
                                                 Number(user?.staff?.birth_year)
@@ -93,17 +91,17 @@ export default async function StaffProfile() {
                                 </div>
                             </div>
                             <div className="space-y-4">
-                                <div className="flex items-center text-neutral-600">
-                                    <PhoneIcon className="w-5 h-5 mr-3 text-neutral-500" />
+                                <div className="flex items-center text-neutral-600 gap-4">
+                                    <PhoneIcon className="w-5 h-5 text-neutral-500" />
                                     <div>
-                                        <p className="font-medium">전화번호</p>
+                                        <p className="font-bold">전화번호</p>
                                         <p>{user?.staff?.phone}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center text-neutral-600">
-                                    <UserGroupIcon className="w-5 h-5 mr-3 text-neutral-500" />
+                                <div className="flex items-center text-neutral-600 gap-4">
+                                    <UserGroupIcon className="w-5 h-5 text-neutral-500" />
                                     <div>
-                                        <p className="font-medium">
+                                        <p className="font-bold">
                                             현재 근무중인 알바 수
                                         </p>
                                         <p>
@@ -119,7 +117,7 @@ export default async function StaffProfile() {
                                 type="submit"
                                 className="flex items-center justify-center w-full px-4 py-2 bg-neutral-800 text-white rounded-lg hover:bg-neutral-700 transition duration-300"
                             >
-                                <ArrowRightOnRectangleIcon className="w-5 h-5 mr-2" />
+                                <ArrowRightStartOnRectangleIcon className="w-5 h-5 mr-2" />
                                 Logout
                             </button>
                         </form>

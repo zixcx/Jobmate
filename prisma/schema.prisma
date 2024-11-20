@@ -44,11 +44,11 @@ model Store {
   store_tag        String
   address          String
   detail_address   String?
-  phone            String            @unique // owner의 phone으로 초기값 설정
-  password         String // 초기값: 랜덤 4자리 숫자 비밀번호
-  theme_color      String? // 가게 테마 색
-  staffAssignments StaffAssignment[] // 가게에서 근무하는 알바생 배정 정보
-  schedules        Schedule[] // 가게와 연관된 일정
+  phone            String            @unique
+  password         String
+  theme_color      String?
+  staffAssignments StaffAssignment[]
+  schedules        Schedule[] // 기존 필드
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -58,12 +58,12 @@ model Staff {
   id          String            @id @default(auto()) @map("_id") @db.ObjectId
   userId      String            @unique @db.ObjectId
   user        User              @relation(fields: [userId], references: [id])
-  name        String // 알바생 이름
+  name        String
   birth_year  Int
   phone       String
-  gender      String // "M" 또는 "F"
-  assignments StaffAssignment[] // 알바생이 근무하는 가게들
-  schedules   Schedule[] // 알바생의 일정
+  gender      String
+  assignments StaffAssignment[]
+  schedules   Schedule[]
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -75,7 +75,7 @@ model StaffAssignment {
   staff       Staff            @relation(fields: [staffId], references: [id])
   storeId     String           @db.ObjectId // store와 연결
   store       Store            @relation(fields: [storeId], references: [id])
-  hourly_wage Float // 시급
+  hourly_wage Int              @default(0) // 시급
   role        String // 직무(직급, 업무)
   status      AssignmentStatus @default(PENDING) // 사장님이 알바생 신청을 수락하거나 거절 (pending, accepted, rejected)
 

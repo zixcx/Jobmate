@@ -16,26 +16,10 @@ import { useEffect, useState } from "react";
 export default function Selection() {
     const router = useRouter();
 
-    useEffect(() => {
-        async function checkUserRole() {
-            const res = await fetch("/api/check_role"); // 역할 확인 API 호출
-            const data = await res.json();
-
-            if (data.roles.includes("STAFF")) {
-                router.push("/staff/home");
-            } else if (data.roles.includes("OWNER")) {
-                router.push("/owner/home");
-            }
-        }
-
-        checkUserRole();
-    }, [router]);
-
     const [ownerOrStaff, setOwnerOrStaff] = useState("");
-    const [sectionIndex, setSectionIndex] = useState(0); // 섹션 인덱스 상태 추가
-    const [rememberChoice, setRememberChoice] = useState(true); // 선택 항목 기억하기 상태
+    const [sectionIndex, setSectionIndex] = useState(0);
+    const [rememberChoice, setRememberChoice] = useState(true);
 
-    // 선택 항목 기억하기를 위해 localStorage에서 값 불러오기
     useEffect(() => {
         const savedChoice = localStorage.getItem("ownerOrStaff");
         if (savedChoice) {
@@ -43,7 +27,6 @@ export default function Selection() {
         }
     }, []);
 
-    // 선택 항목 저장
     useEffect(() => {
         if (rememberChoice && ownerOrStaff) {
             localStorage.setItem("ownerOrStaff", ownerOrStaff);
@@ -61,13 +44,13 @@ export default function Selection() {
     const handleRememberChoice = () => {
         setRememberChoice(!rememberChoice);
         if (!rememberChoice) {
-            localStorage.removeItem("ownerOrStaff"); // 선택 항목 기억하기를 해제할 경우 저장된 항목 삭제
+            localStorage.removeItem("ownerOrStaff");
         }
     };
 
     const goToNextSection = () => {
         if (ownerOrStaff) {
-            setSectionIndex(1); // 섹션 인덱스 상태를 1로 변경하여 다음 섹션으로 이동
+            setSectionIndex(1);
         }
     };
 
@@ -165,14 +148,14 @@ export default function Selection() {
                         </label>
 
                         <button
-                            onClick={goToNextSection} // 선택 후 다음 섹션으로 이동
+                            onClick={goToNextSection}
                             className={classNames(
                                 "flex items-center justify-center h-12 px-3 py-2 transition-colors rounded-lg shadow select-none w-80 md:w-full",
                                 ownerOrStaff
                                     ? "bg-teal-500 text-white hover:bg-teal-600"
                                     : "cursor-not-allowed bg-gray-300 text-gray-500"
                             )}
-                            disabled={!ownerOrStaff} // 선택이 없으면 비활성화
+                            disabled={!ownerOrStaff}
                         >
                             <span>다음</span>
                             <ChevronRightIcon width={16} className="stroke-2" />

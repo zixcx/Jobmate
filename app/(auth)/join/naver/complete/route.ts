@@ -1,8 +1,8 @@
-// /join/naver/complete/route.ts
 import socialAuth from "@/lib/auth/socialAuth";
 import { NextRequest, NextResponse } from "next/server";
 import { loginSession } from "@/lib/session";
 import db from "@/lib/db";
+import { getUserRoles } from "@/lib/auth/getUserRoles"; // 역할 확인 유틸리티
 import crypto from "crypto";
 
 export async function GET(request: NextRequest) {
@@ -87,7 +87,15 @@ export async function GET(request: NextRequest) {
 
         await loginSession(user.id);
 
-        return NextResponse.redirect(new URL("/selection", request.url));
+        // 역할 확인 및 리디렉션 처리
+        const roles = await getUserRoles();
+        if (roles.includes("STAFF")) {
+            return NextResponse.redirect(new URL("/staff/home", request.url));
+        } else if (roles.includes("OWNER")) {
+            return NextResponse.redirect(new URL("/owner/home", request.url));
+        } else {
+            return NextResponse.redirect(new URL("/selection", request.url));
+        }
     } catch (error) {
         console.error("Error during Naver login process:", error);
         return new Response("Internal server error", {

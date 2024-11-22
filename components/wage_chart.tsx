@@ -350,14 +350,14 @@ export default function WageChart() {
         setShowDataViewType(false);
     };
 
+    const chartTypes = ["DOUGHNUT", "LINE", "BAR"] as const;
+
     return (
         <div className="flex flex-col justify-center w-full gap-3">
-            <div className="flex items-center font-semibold *:hover:cursor-pointer relative z-0">
+            <div className="relative flex items-center justify-between font-semibold">
                 <div
                     onClick={toggleDataViewType}
-                    className={`flex items-center gap-1 p-2 select-none rounded-xl hover:bg-neutral-100 ${
-                        showDataViewType && "bg-neutral-100"
-                    }`}
+                    className="flex items-center gap-1 p-2 select-none rounded-xl hover:bg-neutral-100 cursor-pointer"
                 >
                     <span>{selectedDataViewType}</span>
                     <ChevronDownIcon
@@ -370,16 +370,17 @@ export default function WageChart() {
                 </div>
                 <button
                     onClick={toggleSettingModal}
-                    className="absolute right-0 self-center p-2 size-fit rounded-xl hover:bg-neutral-100"
+                    className="p-2 rounded-xl hover:bg-neutral-100"
                 >
                     <Cog6ToothIcon width={20} style={{ strokeWidth: "2" }} />
                 </button>
+
                 {showDataViewType && (
-                    <div className="absolute left-0 bg-white top-10 box">
+                    <div className="absolute left-0 top-full mt-1 z-10 bg-white shadow-lg rounded-xl p-2">
                         {dataViewType.map((type, idx) => (
                             <div
                                 key={idx}
-                                className="px-2 py-1 font-medium rounded-lg hover:bg-neutral-100"
+                                className="px-4 py-2 font-medium rounded-lg hover:bg-neutral-100 cursor-pointer"
                                 onClick={() => handleSelectDataViewType(type)}
                             >
                                 {type}
@@ -390,70 +391,57 @@ export default function WageChart() {
             </div>
 
             {onSetting && (
-                <div className="flex flex-col w-full bg-white">
-                    <label className="flex items-center justify-center gap-1 cursor-pointer label">
-                        <span className="label-text">그래프 정보 표시하기</span>
+                <div className="flex flex-col w-full gap-3 p-4 bg-neutral-100 rounded-xl">
+                    <label className="flex items-center gap-2 cursor-pointer self-center">
                         <input
                             type="checkbox"
                             defaultChecked
-                            className="checkbox"
+                            className="checkbox size-5"
                             onChange={handleShowDataLabel}
                         />
+                        <span className="text-sm select-none">
+                            그래프 정보 표시하기
+                        </span>
                     </label>
-                    <div className="flex justify-around">
-                        <label className="flex gap-1 cursor-pointer label">
-                            <span className="label-text">원형 그래프</span>
-                            <input
-                                type="radio"
-                                name="radio-10"
-                                defaultChecked
-                                onChange={() => handleChartType("DOUGHNUT")}
-                                className="radio"
-                            />
-                        </label>
-                        <label className="flex gap-1 cursor-pointer label">
-                            <span className="label-text">선형 그래프</span>
-                            <input
-                                type="radio"
-                                name="radio-10"
-                                onChange={() => handleChartType("LINE")}
-                                className="radio"
-                            />
-                        </label>
-                        <label className="flex gap-1 cursor-pointer label">
-                            <span className="label-text">막대 그래프</span>
-                            <input
-                                type="radio"
-                                name="radio-10"
-                                onChange={() => handleChartType("BAR")}
-                                className="radio"
-                            />
-                        </label>
+                    <div className="flex gap-4">
+                        {["원형", "선형", "막대"].map((type, index) => (
+                            <label
+                                key={type}
+                                className="flex items-center gap-2 cursor-pointer"
+                            >
+                                <input
+                                    type="radio"
+                                    name="chart-type"
+                                    defaultChecked={index === 0}
+                                    onChange={() =>
+                                        handleChartType(chartTypes[index])
+                                    }
+                                    className="radio size-5"
+                                />
+                                <span className="text-sm select-none">
+                                    {type} 그래프
+                                </span>
+                            </label>
+                        ))}
                     </div>
                 </div>
             )}
-            {chartType === "DOUGHNUT" && (
-                <Doughnut
-                    options={options}
-                    data={chartData}
-                    className="max-h-96"
-                    plugins={[centerTextPlugin]} // 플러그인 적용
-                />
-            )}
-            {chartType === "LINE" && (
-                <Line
-                    options={lineAndBarOptions}
-                    data={chartData}
-                    className="max-h-96"
-                />
-            )}
-            {chartType === "BAR" && (
-                <Bar
-                    options={lineAndBarOptions}
-                    data={chartData}
-                    className="max-h-96"
-                />
-            )}
+
+            <div className="flex justify-center items-center h-[300px] lg:h-[400px]">
+                {chartType === "DOUGHNUT" && (
+                    <Doughnut
+                        options={options}
+                        data={chartData}
+                        plugins={[centerTextPlugin]}
+                    />
+                )}
+                {chartType === "LINE" && (
+                    <Line options={lineAndBarOptions} data={chartData} />
+                )}
+                {chartType === "BAR" && (
+                    <Bar options={lineAndBarOptions} data={chartData} />
+                )}
+            </div>
         </div>
     );
 }

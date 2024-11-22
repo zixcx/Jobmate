@@ -1,3 +1,4 @@
+// ./components/wage_chart.tsx
 "use client";
 
 import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";

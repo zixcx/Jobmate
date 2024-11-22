@@ -1,3 +1,4 @@
+// ./components/store_card.tsx
 "use client";
 
 import { useState } from "react";

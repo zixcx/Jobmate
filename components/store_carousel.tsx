@@ -1,3 +1,4 @@
+// ./components/store_carousel.tsx
 "use client";
 
 import { getContrastYIQ } from "@/lib/textColor";

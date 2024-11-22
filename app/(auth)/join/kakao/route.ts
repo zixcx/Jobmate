@@ -1,3 +1,4 @@
+// ./app/(auth)/join/kakao/route.ts
 import { redirect } from "next/navigation";
 
 export function GET() {

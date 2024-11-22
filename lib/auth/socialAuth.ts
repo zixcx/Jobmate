@@ -1,3 +1,4 @@
+// ./lib/auth/socialAuth.ts
 import { redirect } from "next/navigation";
 
 class SocialAuth {

@@ -1,3 +1,4 @@
+// ./components/input.tsx
 import { InputHTMLAttributes } from "react";
 
 interface InputsProps {

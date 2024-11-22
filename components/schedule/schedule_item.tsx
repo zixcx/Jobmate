@@ -1,3 +1,4 @@
+// ./components/schedule/schedule_item.tsx
 export default function ScheduleItem() {
     return (
         <div className="w-full h-32 box !p-0 box-border relative">

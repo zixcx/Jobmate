@@ -1,3 +1,4 @@
+// ./app/(auth)/layout.tsx
 import Navbar from "@/components/navbar/navbar";
 import React from "react";
 

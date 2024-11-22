@@ -1,3 +1,4 @@
+// ./app/owner/home/page.tsx
 import { BellIcon } from "@heroicons/react/24/outline";
 
 export default function OwnerHome() {

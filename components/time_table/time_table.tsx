@@ -1,3 +1,4 @@
+// ./components/time_table/time_table.tsx
 "use client";
 
 import { getContrastYIQ } from "@/lib/textColor";

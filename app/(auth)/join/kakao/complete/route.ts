@@ -1,3 +1,4 @@
+// ./app/(auth)/join/kakao/complete/route.ts
 import socialAuth from "@/lib/auth/socialAuth";
 import { NextRequest, NextResponse } from "next/server";
 import { loginSession } from "@/lib/session";

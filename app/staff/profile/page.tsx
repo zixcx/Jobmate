@@ -1,3 +1,4 @@
+// ./app/staff/profile/page.tsx
 "use client";
 
 import { logout } from "@/components/navbar/actions";

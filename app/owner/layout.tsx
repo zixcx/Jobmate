@@ -1,3 +1,4 @@
+// ./app/owner/layout.tsx
 import TabBar from "@/components/owner_tabbar";
 import React from "react";
 

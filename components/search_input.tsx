@@ -1,3 +1,4 @@
+// ./components/search_input.tsx
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { InputHTMLAttributes } from "react";
 

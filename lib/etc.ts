@@ -1,3 +1,4 @@
+// ./lib/etc.ts
 export function calculateAge(birthYear: number): number {
     if (isNaN(birthYear) || birthYear <= 0) {
         return -1; // 기본값 반환

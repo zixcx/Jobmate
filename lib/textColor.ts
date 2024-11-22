@@ -1,3 +1,4 @@
+// ./lib/textColor.ts
 // colorUtils.ts
 export function hexToRgb(hex: string) {
     let r = 0,

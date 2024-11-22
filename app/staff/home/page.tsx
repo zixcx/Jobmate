@@ -1,3 +1,4 @@
+// ./app/staff/home/page.tsx
 import {
     BanknotesIcon,
     BriefcaseIcon,

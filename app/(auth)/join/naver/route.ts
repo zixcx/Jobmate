@@ -1,3 +1,4 @@
+// ./app/(auth)/join/naver/route.ts
 import { redirect } from "next/navigation";
 import crypto from "crypto";
 

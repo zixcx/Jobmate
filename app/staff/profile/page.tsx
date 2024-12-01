@@ -129,7 +129,7 @@ export default function StaffProfile() {
                         </div>
 
                         <button
-                            onClick={logout}
+                            onClick={() => logout()}
                             className="mt-8 flex items-center justify-center w-full px-4 py-2 bg-neutral-800 text-white rounded-lg hover:bg-neutral-700 transition duration-300"
                         >
                             <ArrowRightStartOnRectangleIcon className="size-5 mr-2" />

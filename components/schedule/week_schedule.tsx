@@ -2,10 +2,12 @@
 "use client";
 
 import {
+    CalendarDateRangeIcon,
     ChevronDownIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
     Cog6ToothIcon,
+    PlusIcon,
 } from "@heroicons/react/24/outline";
 import dayjs from "dayjs";
 import { useState, useEffect } from "react";
@@ -99,11 +101,11 @@ export default function WeekSchedule() {
                 </div>
 
                 {isShowDateSelector && (
-                    <div className="flex flex-col w-full gap-3 p-5 bg-gray-50 rounded-xl">
+                    <div className="flex flex-col w-full gap-3 p-5 bg-gray-100 rounded-xl">
                         <div className="flex items-center justify-between">
                             <button
                                 onClick={goToPreviousMonth}
-                                className="flex items-center justify-center bg-white rounded-full cursor-pointer w-10 h-10 hover:bg-gradient-to-br hover:from-gray-100/60 hover:to-gray-200/60 hover:backdrop-blur-sm"
+                                className="flex items-center justify-center bg-white rounded-full cursor-pointer w-10 h-10 hover:bg-gray-200 border-[0.1px]"
                             >
                                 <ChevronLeftIcon
                                     width={20}
@@ -113,20 +115,20 @@ export default function WeekSchedule() {
                             <div className="flex justify-center gap-2">
                                 <button
                                     onClick={() => setDateSelectorMode("YEAR")}
-                                    className="px-4 py-2 font-semibold bg-white rounded-lg hover:bg-gradient-to-br hover:from-gray-100/60 hover:to-gray-200/60 hover:backdrop-blur-sm"
+                                    className="px-4 py-2 font-semibold bg-white rounded-lg hover:bg-gray-200 border-[0.1px]"
                                 >
                                     {displayedMonth.year()}년
                                 </button>
                                 <button
                                     onClick={() => setDateSelectorMode("MONTH")}
-                                    className="px-4 py-2 font-semibold bg-white rounded-lg hover:bg-gradient-to-br hover:from-gray-100/60 hover:to-gray-200/60 hover:backdrop-blur-sm"
+                                    className="px-4 py-2 font-semibold bg-white rounded-lg hover:bg-gray-200 border-[0.1px]"
                                 >
                                     {displayedMonth.month() + 1}월
                                 </button>
                             </div>
                             <button
                                 onClick={goToNextMonth}
-                                className="flex items-center justify-center bg-white rounded-full cursor-pointer w-10 h-10 hover:bg-gradient-to-br hover:from-gray-100/60 hover:to-gray-200/60 hover:backdrop-blur-sm"
+                                className="flex items-center justify-center bg-white rounded-full cursor-pointer w-10 h-10 hover:bg-gray-200 border-[0.1px]"
                             >
                                 <ChevronRightIcon
                                     width={20}
@@ -142,7 +144,7 @@ export default function WeekSchedule() {
                                         <button
                                             key={year}
                                             onClick={() => selectYear(year)}
-                                            className="py-2 bg-white rounded-lg hover:bg-gradient-to-br hover:from-gray-100/60 hover:to-gray-200/60 hover:backdrop-blur-sm"
+                                            className="py-2 bg-white rounded-lg hover:bg-gray-200 border-[0.1px]"
                                         >
                                             {year}년
                                         </button>
@@ -158,7 +160,7 @@ export default function WeekSchedule() {
                                         <button
                                             key={month}
                                             onClick={() => selectMonth(month)}
-                                            className="py-2 bg-white rounded-lg hover:bg-gradient-to-br hover:from-gray-100/60 hover:to-gray-200/60 hover:backdrop-blur-sm"
+                                            className="py-2 bg-white rounded-lg hover:bg-gray-200 border-[0.1px]"
                                         >
                                             {month}월
                                         </button>
@@ -191,12 +193,12 @@ export default function WeekSchedule() {
                                         <button
                                             key={idx}
                                             onClick={() => handleDayClick(date)}
-                                            className={`py-2 rounded-lg ${
+                                            className={`py-2 rounded-lg border-[0.1px] ${
                                                 isToday
-                                                    ? "bg-gradient-to-br from-sky-200/60 to-blue-200/60 backdrop-blur-sm text-cyan-800"
+                                                    ? "bg-sky-100 text-sky-900 hover:bg-sky-200/60"
                                                     : isCurrentMonth
-                                                    ? "bg-gradient-to-br from-sky-100/40 to-blue-100/40 backdrop-blur-sm text-cyan-800"
-                                                    : "bg-white text-neutral-600"
+                                                    ? "bg-white hover:bg-neutral-200 text-neutral-800"
+                                                    : "bg-neutral-50 text-neutral-600/80 hover:bg-neutral-200"
                                             }`}
                                         >
                                             {date.date()}
@@ -222,10 +224,10 @@ export default function WeekSchedule() {
                                 key={index}
                                 className={`flex flex-col items-center justify-center text-center rounded-lg py-2 cursor-pointer ${
                                     selectedCol === index
-                                        ? "bg-gradient-to-br from-sky-200/60 to-blue-200/60 backdrop-blur-sm text-sky-800"
+                                        ? "bg-sky-100 text-sky-800"
                                         : date.isSame(today, "day")
-                                        ? "bg-gradient-to-br from-sky-100/40 to-blue-100/40 backdrop-blur-sm text-sky-600"
-                                        : "bg-white hover:bg-gradient-to-br hover:from-gray-100/60 hover:to-gray-200/60 hover:backdrop-blur-sm"
+                                        ? "bg-sky-50 text-sky-900"
+                                        : "bg-white hover:bg-sky-50"
                                 }`}
                                 onClick={() => setSelectedCol(index)}
                             >
@@ -264,9 +266,16 @@ export default function WeekSchedule() {
                     <p className="text-gray-500 mb-4">일정을 추가해 보세요!</p>
                     <button
                         onClick={() => setShowModal(true)}
-                        className="px-4 py-2 bg-gradient-to-br from-sky-200/60 to-blue-200/60 backdrop-blur-sm text-sky-800 rounded-lg hover:bg-gradient-to-br hover:from-sky-300/60 hover:to-blue-300/60 transition-colors"
+                        className="group px-4 py-2 flex gap-1 justify-between items-center bg-sky-100 text-sky-800 rounded-lg hover:bg-sky-200 transition-colors"
                     >
-                        일정 추가하기
+                        <div className="relative flex justify-center items-center">
+                            <CalendarDateRangeIcon width={20} />
+                            <PlusIcon
+                                width={12}
+                                className="absolute -bottom-1 -right-1 bg-sky-100 rounded-full group-hover:bg-sky-200 transition-colors"
+                            />
+                        </div>
+                        <span>일정 추가하기</span>
                     </button>
                 </div>
             </div>

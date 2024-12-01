@@ -1,9 +1,7 @@
-// ./app/(auth)/join/naver/complete/route.ts
 import socialAuth from "@/lib/auth/socialAuth";
 import { NextRequest, NextResponse } from "next/server";
-import { loginSession } from "@/lib/session";
+import { loginSession, setUserRole } from "@/lib/session";
 import db from "@/lib/db";
-import { getUserRoles } from "@/lib/auth/getUserRoles"; // 역할 확인 유틸리티
 import crypto from "crypto";
 
 export async function GET(request: NextRequest) {
@@ -86,17 +84,28 @@ export async function GET(request: NextRequest) {
             });
         }
 
+        // 로그인 세션 설정
         await loginSession(user.id);
 
-        // 역할 확인 및 리디렉션 처리
-        const roles = await getUserRoles();
-        if (roles.includes("STAFF")) {
-            return NextResponse.redirect(new URL("/staff/home", request.url));
-        } else if (roles.includes("OWNER")) {
+        // 역할 확인 및 설정
+        const owner = await db.owner.findUnique({
+            where: { userId: user.id },
+        });
+
+        const staff = await db.staff.findUnique({
+            where: { userId: user.id },
+        });
+
+        if (owner) {
+            await setUserRole("owner");
             return NextResponse.redirect(new URL("/owner/home", request.url));
-        } else {
-            return NextResponse.redirect(new URL("/selection", request.url));
+        } else if (staff) {
+            await setUserRole("staff");
+            return NextResponse.redirect(new URL("/staff/home", request.url));
         }
+
+        // 역할이 없는 경우 기본 페이지로 리다이렉트
+        return NextResponse.redirect(new URL("/selection", request.url));
     } catch (error) {
         console.error("Error during Naver login process:", error);
         return new Response("Internal server error", {

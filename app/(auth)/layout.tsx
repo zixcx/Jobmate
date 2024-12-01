@@ -1,14 +1,17 @@
 // ./app/(auth)/layout.tsx
 import Navbar from "@/components/navbar/navbar";
-import React from "react";
 
-export default function TapLayout({ children }: { children: React.ReactNode }) {
+export default function MainLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
     return (
-        <div>
+        <div className="flex flex-col h-screen overflow-hidden">
             <Navbar />
-
-            <div className="w-full h-16" />
-            {children}
+            <main className="flex-grow overflow-hidden bg-neutral-50">
+                {children}
+            </main>
         </div>
     );
 }

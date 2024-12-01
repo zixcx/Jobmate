@@ -11,6 +11,9 @@
   body {
     @apply bg-neutral-50;
   }
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 @layer components {
@@ -38,5 +41,13 @@
   }
   .safearea {
     @apply w-full h-[calc(100vh-72px)];
+  }
+  .scrollbar-none {
+    @apply overflow-auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }

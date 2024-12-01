@@ -5,11 +5,11 @@ import { useCallback, useState } from "react";
 import SearchInput from "@/components/search_input";
 import StoreCarousel from "@/components/store_carousel";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import TimeTable from "@/components/time_table/time_table";
 import { getStores, applyForStore } from "./action";
 import Modal from "@/components/modal/modal";
 import StoreCard from "@/components/store_card";
 import { debounce } from "lodash";
+import TimeTable from "@/components/TimeTable";
 
 interface Store {
     id: string;
@@ -29,7 +29,7 @@ export default function StaffWork() {
     const [noResults, setNoResults] = useState(false);
 
     const handleSearch = useCallback(
-        debounce(async (query: string) => {
+        debounce((query: string) => {
             const trimmedQuery = query.trim();
 
             if (trimmedQuery === "") {
@@ -38,9 +38,10 @@ export default function StaffWork() {
                 return;
             }
 
-            const result = await getStores(trimmedQuery);
-            setSearchedStores(result);
-            setNoResults(result.length === 0);
+            getStores(trimmedQuery).then((result) => {
+                setSearchedStores(result);
+                setNoResults(result.length === 0);
+            });
         }, 300),
         []
     );
@@ -55,93 +56,99 @@ export default function StaffWork() {
         try {
             const response = await applyForStore(storeId);
             alert(response.message);
-            // Remove the applied store from the searchedStores list
             setSearchedStores((prevStores) =>
                 prevStores.filter((store) => store.id !== storeId)
             );
-        } catch (error) {
+        } catch {
             alert("가입 신청 중 오류가 발생했습니다.");
         }
     };
 
     return (
-        <div className="flex flex-col w-full gap-3 p-10">
-            <span className="title-lg">근무</span>
-            <div className="flex flex-col items-center justify-center w-full gap-3 bg-white box">
-                <span className="self-start title">알림 🔔</span>
-                {stores.length === 0 && (
-                    <div className="flex flex-col items-center justify-center w-full h-full gap-2">
-                        <span>연결된 근무지가 없어요 🙀</span>
-
-                        <button
-                            onClick={() => setShowModal(true)}
-                            className="btn"
-                        >
-                            <MagnifyingGlassIcon width={16} />
-                            <span>찾으러 가기</span>
-                        </button>
-
-                        {showModal && (
-                            <Modal
-                                onClose={() => setShowModal(false)}
-                                closeButtonVisible
-                                width="450px"
-                                height="650px"
-                            >
-                                <div className="flex flex-col w-full h-full gap-2">
-                                    <div className="flex gap-2 w-full items-center justify-center">
-                                        <SearchInput
-                                            placeholder="근무지를 검색해 보세요!"
-                                            value={searchQuery}
-                                            onChange={handleInputChange}
-                                            className="w-full"
-                                        />
-                                    </div>
-                                    {searchQuery.trim() === "" && (
-                                        <div className="box !py-2 bg-neutral-50 flex gap-4 mt-4">
-                                            <span className="text-xs text-neutral-400 whitespace-nowrap flex justify-center items-center">
-                                                알려드려요 📢
-                                            </span>
-                                            <div className="w-px h-full bg-neutral-300" />
-                                            <span className="text-xs text-neutral-400">
-                                                사장님의 <strong>이름</strong>{" "}
-                                                또는 <strong>전화번호</strong>{" "}
-                                                혹은{" "}
-                                                <strong>가게이름+태그</strong>로
-                                                검색해 보세요!
-                                            </span>
-                                        </div>
-                                    )}
-                                    {searchedStores.length > 0 && (
-                                        <div className="flex flex-col gap-2 mt-4">
-                                            {searchedStores.map((store) => (
-                                                <StoreCard
-                                                    key={store.id}
-                                                    {...store}
-                                                    store_detail_address={
-                                                        store.store_detail_address ||
-                                                        ""
-                                                    }
-                                                    onApply={handleApply}
-                                                />
-                                            ))}
-                                        </div>
-                                    )}
-                                    {searchQuery.trim() !== "" && noResults && (
-                                        <div className="text-center text-sm text-neutral-400 mt-4">
-                                            검색 결과가 없습니다. 😥
-                                        </div>
-                                    )}
-                                </div>
-                            </Modal>
+        <div className="flex flex-col w-full gap-6 p-10">
+            <h1 className="title-lg">근무</h1>
+            <div className="grid gap-6 md:grid-cols-2">
+                <div className="flex flex-col gap-6">
+                    <div className="bg-white box">
+                        <h2 className="title mb-4">알림 🔔</h2>
+                        {stores.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center gap-4">
+                                <p className="text-center">
+                                    연결된 근무지가 없어요 🙀
+                                </p>
+                                <button
+                                    onClick={() => setShowModal(true)}
+                                    className="btn"
+                                >
+                                    <MagnifyingGlassIcon width={16} />
+                                    <span>찾으러 가기</span>
+                                </button>
+                            </div>
+                        ) : (
+                            <StoreCarousel stores={stores} />
                         )}
                     </div>
-                )}
+                    {/* Add more components or information here */}
+                    <div className="bg-white box">
+                        <h2 className="title mb-4">근무 통계</h2>
+                        <p>여기에 근무 통계 정보를 추가할 수 있습니다.</p>
+                    </div>
+                </div>
+                <div className="bg-white box">
+                    <TimeTable />
+                </div>
             </div>
-            {stores.length !== 0 && <StoreCarousel stores={stores} />}
-            <div className="flex flex-col gap-3 bg-white box">
-                <TimeTable />
-            </div>
+
+            {showModal && (
+                <Modal
+                    onClose={() => setShowModal(false)}
+                    closeButtonVisible
+                    width="450px"
+                    height="650px"
+                >
+                    <div className="flex flex-col w-full h-full gap-4 p-5">
+                        <SearchInput
+                            placeholder="근무지를 검색해 보세요!"
+                            value={searchQuery}
+                            onChange={handleInputChange}
+                            className="w-full"
+                        />
+                        {searchQuery.trim() === "" && (
+                            <div className="bg-neutral-50 p-4 rounded-lg border">
+                                <p className="text-sm text-neutral-600">
+                                    <span className="font-semibold">
+                                        알려드려요 📢
+                                    </span>
+                                    <br />
+                                    사장님의 <strong>이름</strong> 또는{" "}
+                                    <strong>전화번호</strong> 혹은{" "}
+                                    <strong>가게이름+태그</strong>로 검색해
+                                    보세요!
+                                </p>
+                            </div>
+                        )}
+                        {searchedStores.length > 0 && (
+                            <div className="flex flex-col gap-4 overflow-y-auto">
+                                {searchedStores.map((store) => (
+                                    <StoreCard
+                                        key={store.id}
+                                        {...store}
+                                        store_detail_address={
+                                            store.store_detail_address || ""
+                                        }
+                                        onApply={handleApply}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                        {searchQuery.trim() !== "" && noResults && (
+                            <p className="text-center text-sm text-neutral-400">
+                                검색 결과가 없습니다. 😥
+                            </p>
+                        )}
+                    </div>
+                </Modal>
+            )}
         </div>
     );
 }

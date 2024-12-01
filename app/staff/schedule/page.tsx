@@ -1,9 +1,5 @@
 // ./app/staff/schedule/page.tsx
-import {
-    PlusIcon,
-    CalendarDaysIcon,
-    ClockIcon,
-} from "@heroicons/react/24/outline";
+import { CalendarDaysIcon, ClockIcon } from "@heroicons/react/24/outline";
 import WeekSchedule from "@/components/schedule/week_schedule";
 
 export default function StaffSchedule() {

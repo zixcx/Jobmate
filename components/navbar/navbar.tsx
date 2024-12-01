@@ -43,7 +43,7 @@ export default function Navbar() {
     };
 
     return (
-        <div className="w-full fixed h-16 flex items-center px-10 md:px-14 bg-white border-b shadow-sm justify-between">
+        <div className="z-50 w-full fixed top-0 left-0 h-16 flex items-center px-10 md:px-14 bg-white border-b shadow-sm justify-between">
             <Link
                 href={"/"}
                 className="text-black text-xl font-semibold [letter-spacing:-1px] select-none cursor-pointer"

@@ -12,27 +12,13 @@ import {
 } from "@heroicons/react/24/solid";
 import classNames from "classnames";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Selection() {
     const router = useRouter();
 
     const [ownerOrStaff, setOwnerOrStaff] = useState("");
     const [sectionIndex, setSectionIndex] = useState(0);
-    const [rememberChoice, setRememberChoice] = useState(true);
-
-    useEffect(() => {
-        const savedChoice = localStorage.getItem("ownerOrStaff");
-        if (savedChoice) {
-            setOwnerOrStaff(savedChoice);
-        }
-    }, []);
-
-    useEffect(() => {
-        if (rememberChoice && ownerOrStaff) {
-            localStorage.setItem("ownerOrStaff", ownerOrStaff);
-        }
-    }, [ownerOrStaff, rememberChoice]);
 
     const selectStaff = () => {
         setOwnerOrStaff("staff");
@@ -40,13 +26,6 @@ export default function Selection() {
 
     const selectOwner = () => {
         setOwnerOrStaff("owner");
-    };
-
-    const handleRememberChoice = () => {
-        setRememberChoice(!rememberChoice);
-        if (!rememberChoice) {
-            localStorage.removeItem("ownerOrStaff");
-        }
     };
 
     const goToNextSection = () => {
@@ -135,33 +114,19 @@ export default function Selection() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col items-center justify-center max-w-md w-80 md:w-full">
-                        <label className="flex self-start gap-1 cursor-pointer label">
-                            <input
-                                type="checkbox"
-                                checked={rememberChoice}
-                                onChange={handleRememberChoice}
-                                className="checkbox checkbox-sm"
-                            />
-                            <span className="label-text">
-                                선택 항목 기억하기
-                            </span>
-                        </label>
-
-                        <button
-                            onClick={goToNextSection}
-                            className={classNames(
-                                "flex items-center justify-center h-12 px-3 py-2 transition-colors rounded-lg shadow select-none w-80 md:w-full",
-                                ownerOrStaff
-                                    ? "bg-teal-500 text-white hover:bg-teal-600"
-                                    : "cursor-not-allowed bg-gray-300 text-gray-500"
-                            )}
-                            disabled={!ownerOrStaff}
-                        >
-                            <span>다음</span>
-                            <ChevronRightIcon width={16} className="stroke-2" />
-                        </button>
-                    </div>
+                    <button
+                        onClick={goToNextSection}
+                        className={classNames(
+                            "flex items-center mt-5 justify-center h-12 px-3 py-2 transition-colors rounded-lg shadow select-none w-80 md:w-full",
+                            ownerOrStaff
+                                ? "bg-teal-500 text-white hover:bg-teal-600"
+                                : "cursor-not-allowed bg-gray-300 text-gray-500"
+                        )}
+                        disabled={!ownerOrStaff}
+                    >
+                        <span>다음</span>
+                        <ChevronRightIcon width={16} className="stroke-2" />
+                    </button>
                 </section>
             )}
             {sectionIndex === 1 && ownerOrStaff === "staff" && <StaffForm />}

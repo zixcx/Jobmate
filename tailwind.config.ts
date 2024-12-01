@@ -1,5 +1,5 @@
-import type { Config } from "tailwindcss";
 import daisyui from "daisyui";
+import { Config, PluginAPI } from "tailwindcss/types/config";
 
 const config: Config = {
     content: [
@@ -19,9 +19,14 @@ const config: Config = {
                     "0%": { opacity: "0" },
                     "100%": { opacity: "1" },
                 },
+                bounceY: {
+                    "0%, 100%": { transform: "translateY(0)" },
+                    "50%": { transform: "translateY(10px)" },
+                },
             },
             animation: {
                 mount: "0.5s ease-in-out mount-effect",
+                bounceY: "bounceY 2s infinite",
             },
             scale: {
                 "96": "0.96",
@@ -35,12 +40,7 @@ const config: Config = {
             },
         },
     },
-    plugins: [
-        daisyui,
-        // require("tailwindcss/plugin")(({ addVariant }: PluginAPI) => {
-        //     addVariant("search-cancel", "&::-webkit-search-cancel-button");
-        // }),
-    ],
+    plugins: [daisyui],
     daisyui: {
         themes: false, // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
         darkTheme: "white", // name of one of the included themes for dark mode

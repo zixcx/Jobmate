@@ -1,4 +1,3 @@
-// ./app/staff/profile/action.ts
 "use server";
 
 import db from "@/lib/db";
@@ -9,14 +8,14 @@ import { redirect } from "next/navigation";
 const profileCache = new Map<string, { data: any; timestamp: number }>();
 
 // 캐시 유효 시간 (예: 10분)
-const CACHE_DURATION = 10 * 60 * 1000; // 10분
+const CACHE_DURATION = 10 * 60 * 1000;
 
 export async function logout() {
     const session = await getSession();
     if (session?.destroy) {
-        await session.destroy(); // 세션 삭제
+        await session.destroy();
     }
-    redirect("/"); // 메인 페이지로 리다이렉트
+    redirect("/");
 }
 
 export async function getProfileData() {
@@ -33,7 +32,7 @@ export async function getProfileData() {
 
         if (cached && now - cached.timestamp < CACHE_DURATION) {
             console.log("Returning cached profile data");
-            return cached.data; // 캐시 데이터 반환
+            return cached.data;
         }
 
         // DB에서 사용자 데이터 가져오기
@@ -41,13 +40,15 @@ export async function getProfileData() {
             where: { id: session.id },
             select: {
                 avatar: true,
-                staff: {
+                owner: {
                     select: {
                         name: true,
-                        birth_year: true,
-                        phone: true,
-                        gender: true,
-                        assignments: { select: { id: true } },
+                        store: {
+                            select: {
+                                store_name: true,
+                                phone: true,
+                            },
+                        },
                     },
                 },
             },

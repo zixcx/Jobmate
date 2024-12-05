@@ -1,112 +1,25 @@
-"use client";
+// ./app/owner/profile/page.tsx
 
-import { logout } from "@/components/navbar/actions";
-import { useEffect, useState } from "react";
-import {
-    PencilSquareIcon,
-    PhoneIcon,
-    UserGroupIcon,
-    ArrowRightStartOnRectangleIcon,
-} from "@heroicons/react/24/outline";
-import Image from "next/image";
+import OwnerInteractiveProfile from "@/components/Profile/owner/OwnerInteractiveProfile";
 import { getProfileData } from "./action";
 
-interface ProfileData {
-    avatar: string | null;
-    owner: {
-        name: string;
-        store: {
-            store_name: string;
-            phone: string;
-        } | null;
-    } | null;
-}
+export default async function OwnerProfile() {
+    // Fetch data on the server side
+    const user = await getProfileData();
 
-export default function OwnerProfile() {
-    const [user, setUser] = useState<ProfileData | null>(null);
+    // function delay(ms: number) {
+    //     return new Promise((resolve) => setTimeout(resolve, ms));
+    // }
 
-    useEffect(() => {
-        async function fetchProfileData() {
-            const data = await getProfileData();
-            setUser(data);
-        }
-
-        fetchProfileData();
-    }, []);
+    // // Usage in your server component:
+    // await delay(10000);
 
     return (
         <div className="min-h-screen p-8">
-            <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border">
                 <div className="md:flex">
-                    <div className="md:flex-shrink-0 bg-neutral-800 text-white p-8 flex flex-col items-center justify-center">
-                        <div className="relative">
-                            <Image
-                                src={
-                                    user?.avatar ??
-                                    "/assets/default_profile.jpg"
-                                }
-                                width={160}
-                                height={160}
-                                className="rounded-full border-4 border-white shadow-lg"
-                                alt={user?.owner?.name || "Owner Avatar"}
-                            />
-                        </div>
-                        <div className="flex justify-center items-center mt-6 relative">
-                            <h1 className="text-3xl font-bold text-center">
-                                {user?.owner?.name}
-                            </h1>
-                            <button
-                                onClick={() => {
-                                    alert("username edit");
-                                }}
-                                className="absolute -right-9 bottom-0 flex justify-center items-center p-1.5 rounded-lg cursor-pointer hover:bg-neutral-700 transition duration-300"
-                            >
-                                <PencilSquareIcon className="size-5 text-neutral-100" />
-                            </button>
-                        </div>
-                    </div>
-                    <div className="p-8 md:flex-grow">
-                        <div className="flex justify-between mb-6">
-                            <h2 className="text-2xl font-semibold text-neutral-800">
-                                정보
-                            </h2>
-                            <button className="p-1.5 rounded-lg cursor-pointer hover:bg-neutral-200 transition duration-300">
-                                <PencilSquareIcon className="size-5 text-neutral-600" />
-                            </button>
-                        </div>
-                        <div className="grid md:grid-cols-2 gap-6">
-                            <div className="space-y-4">
-                                <div className="flex items-center text-neutral-600 gap-4">
-                                    <UserGroupIcon className="size-5 text-neutral-500" />
-                                    <div>
-                                        <p className="font-bold">가게 이름</p>
-                                        <p>
-                                            {user?.owner?.store?.store_name ??
-                                                "가게 정보 없음"}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center text-neutral-600 gap-4">
-                                    <PhoneIcon className="size-5 text-neutral-500" />
-                                    <div>
-                                        <p className="font-bold">전화번호</p>
-                                        <p>
-                                            {user?.owner?.store?.phone ??
-                                                "전화번호 정보 없음"}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button
-                            onClick={() => logout()}
-                            className="mt-8 flex items-center justify-center w-full px-4 py-2 bg-neutral-800 text-white rounded-lg hover:bg-neutral-700 transition duration-300"
-                        >
-                            <ArrowRightStartOnRectangleIcon className="size-5 mr-2" />
-                            Logout
-                        </button>
-                    </div>
+                    {/* Pass the fetched data to the client component */}
+                    <OwnerInteractiveProfile user={user} />
                 </div>
             </div>
         </div>

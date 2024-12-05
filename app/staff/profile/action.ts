@@ -5,8 +5,24 @@ import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { redirect } from "next/navigation";
 
+type UserProfile = {
+    avatar: string | null; // 사용자 아바타 (nullable)
+    staff: {
+        name: string;
+        birth_year: number;
+        phone: string;
+        gender: string;
+        assignments: { id: string }[]; // 배열로 정의
+    } | null; // staff 정보가 없을 수도 있음
+};
+
+type ProfileCacheEntry = {
+    data: UserProfile;
+    timestamp: number;
+};
+
 // 메모리 캐시 설정
-const profileCache = new Map<string, { data: any; timestamp: number }>();
+const profileCache = new Map<string, ProfileCacheEntry>();
 
 // 캐시 유효 시간 (예: 10분)
 const CACHE_DURATION = 10 * 60 * 1000; // 10분
@@ -19,7 +35,7 @@ export async function logout() {
     redirect("/"); // 메인 페이지로 리다이렉트
 }
 
-export async function getProfileData() {
+export async function getProfileData(): Promise<UserProfile | null> {
     try {
         const session = await getSession();
 
@@ -57,10 +73,21 @@ export async function getProfileData() {
             throw new Error("User not found");
         }
 
-        // 캐시에 저장
-        profileCache.set(session.id, { data: user, timestamp: now });
+        // gender 변환
+        const transformedUser: UserProfile = {
+            avatar: user.avatar,
+            staff: user.staff
+                ? {
+                      ...user.staff,
+                      gender: user.staff.gender,
+                  }
+                : null,
+        };
 
-        return user;
+        // 캐시에 저장
+        profileCache.set(session.id, { data: transformedUser, timestamp: now });
+
+        return transformedUser;
     } catch (error) {
         console.error("Error fetching profile data:", error);
         return null;

@@ -46,27 +46,29 @@ export async function getStores(query: string) {
 export async function applyForStore(storeId: string) {
     try {
         const session = await getSession();
-
         if (!session || !session.id) {
             throw new Error("로그인된 세션이 유효하지 않습니다.");
         }
 
-        const staffId = session.id;
+        // User ID로 Staff를 조회합니다.
+        const staff = await db.staff.findUnique({
+            where: { userId: session.id },
+        });
 
-        // ObjectId 유효성 검사
-        if (!ObjectId.isValid(storeId)) {
-            throw new Error("유효하지 않은 storeId 형식입니다.");
+        if (!staff) {
+            throw new Error("Staff 정보를 찾을 수 없습니다.");
         }
 
-        if (!ObjectId.isValid(staffId)) {
-            throw new Error("유효하지 않은 staffId 형식입니다.");
+        const staffId = staff.id;
+
+        if (!ObjectId.isValid(storeId) || !ObjectId.isValid(staffId)) {
+            throw new Error("유효하지 않은 ID 형식입니다.");
         }
 
-        // 중복 신청 여부 확인
         const existingApplication = await db.staffAssignment.findFirst({
             where: {
-                staffId: new ObjectId(staffId).toString(), // ObjectId로 변환
-                storeId: new ObjectId(storeId).toString(), // ObjectId로 변환
+                staffId: staffId,
+                storeId: storeId,
                 status: "PENDING",
             },
         });
@@ -75,25 +77,23 @@ export async function applyForStore(storeId: string) {
             throw new Error("이미 해당 가게에 신청을 보냈습니다.");
         }
 
-        // 새 신청 생성
         await db.staffAssignment.create({
             data: {
-                staffId: new ObjectId(staffId).toString(), // ObjectId로 변환
-                storeId: new ObjectId(storeId).toString(), // ObjectId로 변환
+                staffId: staffId,
+                storeId: storeId,
                 status: "PENDING",
-                hourly_wage: 0, // 기본값 설정
-                role: "알바", // 기본값 설정
+                hourly_wage: 0,
+                role: "알바",
             },
         });
 
         return { success: true, message: "가입 신청이 완료되었습니다." };
     } catch (error) {
+        console.error("Error applying for store:", error);
         return {
             success: false,
             message:
-                error instanceof Error
-                    ? error.message
-                    : "알 수 없는 오류가 발생했습니다.",
+                error instanceof Error ? error.message : "오류가 발생했습니다.",
         };
     }
 }

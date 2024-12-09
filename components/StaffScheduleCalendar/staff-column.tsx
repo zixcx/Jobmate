@@ -3,6 +3,7 @@
 import * as React from "react";
 import { type StaffColumnProps } from "./types";
 import dayjs from "dayjs";
+import Image from "next/image";
 
 export function StaffColumn({ staff, events, width }: StaffColumnProps) {
     const endOfDay = dayjs().hour(23).minute(0).second(0);
@@ -31,7 +32,7 @@ export function StaffColumn({ staff, events, width }: StaffColumnProps) {
             style={width > 0 ? { width: `${width}px` } : {}}
         >
             <div className="flex h-20 items-center gap-3 border-b p-4">
-                <img
+                <Image
                     src={staff.avatar}
                     alt={staff.name}
                     className="h-10 w-10 rounded-full"

@@ -1,3 +1,4 @@
+// ./app/owner/profile/loading.tsx
 import {
     PhoneIcon,
     UserGroupIcon,

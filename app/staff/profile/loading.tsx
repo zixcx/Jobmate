@@ -1,3 +1,4 @@
+// ./app/staff/profile/loading.tsx
 import {
     PhoneIcon,
     CalendarIcon,

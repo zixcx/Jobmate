@@ -1,3 +1,4 @@
+// ./components/Profile/owner/OwnerInteractiveProfile.tsx
 // ./app/owner/profile/OwnerInteractiveProfile.tsx
 "use client";
 

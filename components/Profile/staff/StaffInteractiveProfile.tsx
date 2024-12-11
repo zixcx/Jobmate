@@ -1,3 +1,4 @@
+// ./components/Profile/staff/StaffInteractiveProfile.tsx
 // ./app/staff/profile/InteractiveProfile.tsx
 "use client";
 

@@ -26,7 +26,7 @@ export function EventTooltip({ event, position, onClose }: EventTooltipProps) {
                     {" - "}
                     {event.end.format("HH:mm")}
                 </p>
-                <p className="text-xs text-neutral-500">{event.store}</p>
+                <p className="text-xs text-neutral-500">{event.subtitle}</p>
             </div>
             <button
                 className="absolute top-1 right-1 text-gray-500 hover:text-gray-700"

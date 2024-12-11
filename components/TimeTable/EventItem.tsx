@@ -23,15 +23,13 @@ export function EventItem({
 
     return (
         <div
-            className={`absolute left-0 right-0 flex flex-col items-center justify-start p-1 text-xs rounded-md shadow-sm transition-all overflow-hidden cursor-pointer
+            className={`absolute left-0 right-0 flex flex-col items-center justify-start p-1 text-xs rounded-md shadow-sm transition-all overflow-hidden cursor-pointer bg-blue-100 text-gray-800
                 ${isShortEvent ? "hover:shadow-md" : ""}`}
             style={{
                 top: `${
                     (event.start.diff(startTime, "minute") / tableLen) * 100
                 }%`,
                 height: `${(duration / tableLen) * 100}%`,
-                backgroundColor: event.bg_color,
-                color: getContrastYIQ(event.bg_color),
             }}
             onClick={(e) => onClick(event, e)}
         >

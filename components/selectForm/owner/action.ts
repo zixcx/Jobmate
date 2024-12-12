@@ -107,10 +107,6 @@ export async function ownerFormAction(_: unknown, formData: FormData) {
             .toString()
             .padStart(4, "0");
 
-        const password = Math.floor(Math.random() * 10000)
-            .toString()
-            .padStart(4, "0");
-
         // 3. owner와 store 생성
         await db.owner.create({
             data: {
@@ -123,7 +119,6 @@ export async function ownerFormAction(_: unknown, formData: FormData) {
                         address: result.data.address,
                         detail_address: result.data.detail_address,
                         phone: result.data.phone,
-                        password,
                     },
                 },
             },

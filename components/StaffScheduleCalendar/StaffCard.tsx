@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import Image from "next/image";
 import TimeTable from "../TimeTable";
 import { Event, Staff } from "./types";
@@ -9,6 +9,52 @@ interface StaffCardProps {
     currentWeek: number;
     staffCardWidth: number;
 }
+
+export type Weekday = "SUN" | "MON" | "TUE" | "WED" | "THU" | "FRI" | "SAT";
+
+const sampleEvents: {
+    title: string;
+    weekday: Weekday;
+    start: Dayjs;
+    end: Dayjs;
+    subtitle?: string;
+}[] = [
+    {
+        title: "event1",
+        weekday: "SUN",
+        start: dayjs().hour(10).minute(0),
+        end: dayjs().hour(13).minute(0),
+        subtitle: "store1",
+    },
+    {
+        title: "event2",
+        weekday: "THU",
+        start: dayjs().hour(9).minute(0),
+        end: dayjs().hour(12).minute(0),
+        subtitle: "store2",
+    },
+    {
+        title: "event3",
+        weekday: "FRI",
+        start: dayjs().hour(17).minute(0),
+        end: dayjs().hour(21).minute(0),
+        subtitle: "store3",
+    },
+    {
+        title: "event4",
+        weekday: "TUE",
+        start: dayjs().hour(13).minute(0),
+        end: dayjs().hour(17).minute(0),
+        subtitle: "store4",
+    },
+    {
+        title: "event5",
+        weekday: "WED",
+        start: dayjs().hour(12).minute(0),
+        end: dayjs().hour(13).minute(0),
+        subtitle: "store5",
+    },
+];
 
 export default function StaffCard({
     staff,
@@ -61,7 +107,7 @@ export default function StaffCard({
                 )}
             </div>
             {/* event grid */}
-            <TimeTable />
+            <TimeTable events={sampleEvents} />
         </div>
     );
 }

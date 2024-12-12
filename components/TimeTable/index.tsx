@@ -18,52 +18,11 @@ const weekdayMapping: { [key: string]: string } = {
     SAT: "토",
 };
 
-const events: Event[] = [
-    {
-        title: "event1",
-        weekday: "SUN",
-        start: dayjs().hour(10).minute(0),
-        end: dayjs().hour(13).minute(0),
-        subtitle: "store1",
-    },
-    {
-        title: "event2",
-        weekday: "MON",
-        start: dayjs().hour(10).minute(0),
-        end: dayjs().hour(13).minute(0),
-        subtitle: "store1",
-    },
-    {
-        title: "event3",
-        weekday: "SUN",
-        start: dayjs().hour(16).minute(0),
-        end: dayjs().hour(17).minute(0),
-        subtitle: "store3",
-    },
-    {
-        title: "event4",
-        weekday: "SAT",
-        start: dayjs().hour(11).minute(0),
-        end: dayjs().hour(22).minute(0),
-        subtitle: "store4",
-    },
-    {
-        title: "event5",
-        weekday: "WED",
-        start: dayjs().hour(20).minute(0),
-        end: dayjs().hour(22).minute(0),
-        subtitle: "store4",
-    },
-    {
-        title: "event6",
-        weekday: "FRI",
-        start: dayjs().hour(18).minute(0),
-        end: dayjs().hour(21).minute(0),
-        subtitle: "store4",
-    },
-];
+interface TimeTableProps {
+    events: Event[];
+}
 
-export default function TimeTable() {
+const TimeTable: React.FC<TimeTableProps> = ({ events }) => {
     const start_time =
         dayjs.min(events.map((event) => event.start)) || dayjs().startOf("day");
     const end_time =
@@ -180,4 +139,5 @@ export default function TimeTable() {
             )}
         </div>
     );
-}
+};
+export default TimeTable;

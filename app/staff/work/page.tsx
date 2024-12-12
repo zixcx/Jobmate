@@ -1,18 +1,17 @@
-// ./app/staff/work/page.tsx
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import SearchInput from "@/components/search_input";
 import StoreCarousel from "@/components/store_carousel";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { getStores, applyForStore } from "./action";
+import { getStores, applyForStore } from "./actions";
 import Modal from "@/components/modal/modal";
 import StoreCard from "@/components/store_card";
 import { debounce } from "lodash";
 import TimeTable from "@/components/TimeTable";
 import { Event } from "@/components/TimeTable/types";
-import dayjs from "dayjs";
 import { PlusIcon } from "lucide-react";
+import dayjs from "dayjs";
 
 interface Store {
     id: string;
@@ -69,8 +68,24 @@ export default function StaffWork() {
     const [showTimeTableModal, setShowTimeTableModal] = useState(false);
     const [noResults, setNoResults] = useState(false);
 
+    useEffect(() => {
+        const fetchStores = async () => {
+            try {
+                // getStores를 직접 사용
+                const initialStores = await getStores("");
+                setStores(initialStores);
+            } catch (error) {
+                console.error("Error fetching stores:", error);
+                // 에러 처리 로직
+            }
+        };
+
+        fetchStores();
+    }, []); // 의존성 배열 비움
+
+    // handleSearch 함수의 useCallback 의존성 배열에 getStores를 직접 추가
     const handleSearch = useCallback(
-        debounce((query: string) => {
+        debounce(async (query: string) => {
             const trimmedQuery = query.trim();
 
             if (trimmedQuery === "") {
@@ -79,12 +94,12 @@ export default function StaffWork() {
                 return;
             }
 
-            getStores(trimmedQuery).then((result) => {
-                setSearchedStores(result);
-                setNoResults(result.length === 0);
-            });
+            // getStores를 직접 사용
+            const result = await getStores(trimmedQuery);
+            setSearchedStores(result);
+            setNoResults(result.length === 0);
         }, 300),
-        []
+        [getStores] // 의존성 배열에 getStores 추가
     );
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,9 +156,7 @@ export default function StaffWork() {
                     <div className="w-full flex justify-between items-center mb-4">
                         <span className="text-xl font-semibold">시간표</span>
                         <button
-                            onClick={() => {
-                                setShowTimeTableModal(true);
-                            }}
+                            onClick={() => setShowTimeTableModal(true)}
                             className="p-2 hover:bg-neutral-100 rounded-lg active:bg-neutral-200 transition-colors"
                         >
                             <PlusIcon

@@ -1,4 +1,3 @@
-// ./app/(auth)/join/kakao/complete/route.ts
 import socialAuth from "@/lib/auth/socialAuth";
 import { NextRequest, NextResponse } from "next/server";
 import { loginSession, setUserRole } from "@/lib/session";
@@ -15,7 +14,17 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        const token = await socialAuth.getKakaoToken(code);
+        const tokenResponse = await socialAuth.getKakaoToken(code);
+
+        // 토큰 요청 실패 시 에러 처리
+        if (tokenResponse.error) {
+            console.error("Failed to get Kakao token:", tokenResponse.error);
+            return new Response("Failed to get Kakao token", {
+                status: 500,
+            });
+        }
+
+        const token = tokenResponse.access_token;
 
         const userInfoResponse = await fetch(
             "https://kapi.kakao.com/v2/user/me",
@@ -26,27 +35,33 @@ export async function GET(request: NextRequest) {
             }
         );
 
-        const userInfo = await userInfoResponse.json();
-
-        if (userInfo.error) {
+        // 사용자 정보 요청 실패 시 에러 처리
+        if (!userInfoResponse.ok) {
+            const errorData = await userInfoResponse.json();
             console.error(
                 "Failed to fetch user info from Kakao:",
-                userInfo.error
+                userInfoResponse.status,
+                errorData
             );
-            return NextResponse.redirect(new URL("/", request.url));
+            return new Response("Failed to fetch user info from Kakao", {
+                status: userInfoResponse.status,
+            });
         }
 
-        const kakaoId = userInfo.id.toString();
-        const username = userInfo.kakao_account.profile.nickname || "unknown";
-        const avatar = userInfo.kakao_account.profile.profile_image_url || "";
+        const userInfo = await userInfoResponse.json();
+
+        const kakaoId = userInfo.id?.toString();
+        const username = userInfo.kakao_account?.profile?.nickname || "unknown";
+        const avatar = userInfo.kakao_account?.profile?.profile_image_url || "";
 
         if (!kakaoId) {
-            console.error("Kakao ID is undefined or null");
-            return new Response("Failed to retrieve user information", {
+            console.error("Kakao ID is undefined or null", userInfo);
+            return new Response("Failed to retrieve Kakao ID", {
                 status: 500,
             });
         }
 
+        // 사용자 생성 전 kakao_id 중복 체크
         let user = await db.user.findUnique({
             where: {
                 kakao_id: kakaoId,

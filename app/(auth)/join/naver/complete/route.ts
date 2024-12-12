@@ -1,4 +1,3 @@
-// ./app/(auth)/join/naver/complete/route.ts
 import socialAuth from "@/lib/auth/socialAuth";
 import { NextRequest, NextResponse } from "next/server";
 import { loginSession, setUserRole } from "@/lib/session";
@@ -16,12 +15,17 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-        const token = await socialAuth.getNaverToken(code, state);
+        const tokenResponse = await socialAuth.getNaverToken(code, state);
 
-        if (!token) {
-            console.error("Failed to obtain access token from Naver");
-            return new Response("Authentication failed", { status: 401 });
+        // 토큰 요청 실패 시 에러 처리
+        if (tokenResponse.error) {
+            console.error("Failed to get Naver token:", tokenResponse.error);
+            return new Response("Failed to get Naver token", {
+                status: 500,
+            });
         }
+
+        const token = tokenResponse.access_token;
 
         const userInfoResponse = await fetch(
             "https://openapi.naver.com/v1/nid/me",
@@ -31,6 +35,19 @@ export async function GET(request: NextRequest) {
                 },
             }
         );
+
+        // 사용자 정보 요청 실패 시 에러 처리
+        if (!userInfoResponse.ok) {
+            const errorData = await userInfoResponse.json();
+            console.error(
+                "Failed to fetch user info from Naver:",
+                userInfoResponse.status,
+                errorData
+            );
+            return new Response("Failed to fetch user info from Naver", {
+                status: userInfoResponse.status,
+            });
+        }
 
         const userInfoData = await userInfoResponse.json();
 
@@ -56,6 +73,7 @@ export async function GET(request: NextRequest) {
             });
         }
 
+        // 사용자 생성 전 naver_id 중복 체크
         let user = await db.user.findUnique({
             where: {
                 naver_id: naverId.toString(),

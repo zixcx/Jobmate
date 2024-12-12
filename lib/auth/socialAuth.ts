@@ -1,8 +1,10 @@
-// ./lib/auth/socialAuth.ts
 import { redirect } from "next/navigation";
 
 class SocialAuth {
-    async getKakaoToken(code: string): Promise<string> {
+    async getKakaoToken(
+        code: string
+    ): Promise<{ access_token?: string; error?: string }> {
+        // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 반환 타입 변경
         const tokenParams = new URLSearchParams({
             grant_type: "authorization_code",
             client_id: process.env.KAKAO_REST_API_KEY!,
@@ -20,15 +22,21 @@ class SocialAuth {
             body: tokenParams.toString(),
         });
 
-        const { error, access_token } = await tokenResponse.json();
+        const tokenData = await tokenResponse.json(); // 응답 객체를 JSON으로 파싱
 
-        if (error) {
-            return redirect("/");
+        if (tokenData.error) {
+            console.error("Error getting Kakao token:", tokenData.error);
+            return { error: tokenData.error }; // 에러가 있으면 에러 객체 반환
         }
-        return access_token;
+
+        return { access_token: tokenData.access_token }; // access_token 반환
     }
 
-    async getNaverToken(code: string, state: string): Promise<string> {
+    async getNaverToken(
+        code: string,
+        state: string
+    ): Promise<{ access_token?: string; error?: string }> {
+        // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 반환 타입 변경
         const tokenParams = new URLSearchParams({
             grant_type: "authorization_code",
             client_id: process.env.NAVER_CLIENT_ID!,
@@ -47,12 +55,14 @@ class SocialAuth {
             body: tokenParams.toString(),
         });
 
-        const { error, access_token } = await tokenResponse.json();
+        const tokenData = await tokenResponse.json(); // 응답 객체를 JSON으로 파싱
 
-        if (error) {
-            return redirect("/");
+        if (tokenData.error) {
+            console.error("Error getting Naver token:", tokenData.error);
+            return { error: tokenData.error }; // 에러가 있으면 에러 객체 반환
         }
-        return access_token;
+
+        return { access_token: tokenData.access_token }; // access_token 반환
     }
 }
 

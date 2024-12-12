@@ -17,8 +17,8 @@ model User {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   username   String   @unique
   avatar     String?
-  naver_id   String?  @unique
-  kakao_id   String?  @unique
+  naver_id   String?  @unique @default(uuid())
+  kakao_id   String?  @unique @default(uuid())
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 

@@ -1,4 +1,3 @@
-// ./components/modal/modal_button.tsx
 "use client";
 
 import { useState } from "react";
@@ -23,22 +22,29 @@ export default function ModalButton({
 }: ModalButtonProps) {
     const [isShowModal, setIsShowModal] = useState(false);
 
+    const handleOpenModal = () => {
+        setIsShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsShowModal(false);
+    };
+
     return (
         <>
-            <button onClick={() => setIsShowModal(true)} className={className}>
+            <button onClick={handleOpenModal} className={className}>
                 {buttonChildren}
             </button>
 
-            {isShowModal && (
-                <Modal
-                    onClose={() => setIsShowModal(false)}
-                    closeButtonVisible={modalCloseBtnVisible}
-                    width={modalWidth}
-                    height={modalHeight}
-                >
-                    {modalChildren}
-                </Modal>
-            )}
+            <Modal
+                show={isShowModal} // show prop 추가
+                onClose={handleCloseModal}
+                closeButtonVisible={modalCloseBtnVisible}
+                width={modalWidth}
+                height={modalHeight}
+            >
+                {modalChildren}
+            </Modal>
         </>
     );
 }

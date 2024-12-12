@@ -1,4 +1,3 @@
-// ./components/selectForm/owner/owner_form.tsx
 "use client";
 import {
     ChevronRightIcon,
@@ -184,16 +183,18 @@ export default function OwnerForm() {
                     </button>
                 )}
             </form>
-            {isShowModal && (
-                <Modal onClose={closeModal} closeButtonVisible>
-                    <div className="w-full h-full border">
-                        <DaumPostcode
-                            onComplete={handleComplete}
-                            onClose={handleClose}
-                        />
-                    </div>
-                </Modal>
-            )}
+            <Modal
+                show={isShowModal} // show prop 추가
+                onClose={closeModal}
+                closeButtonVisible
+            >
+                <div className="w-full h-full border">
+                    <DaumPostcode
+                        onComplete={handleComplete}
+                        onClose={handleClose}
+                    />
+                </div>
+            </Modal>
         </>
     );
 }

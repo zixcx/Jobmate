@@ -33,7 +33,8 @@
         "**/*.ts",
         "**/*.tsx",
         ".next/types/**/*.ts",
-        "components/StaffScheduleCalendar/StaffCard.tsx"
+        "components/StaffScheduleCalendar/StaffCard.tsx",
+        "../textColor.ts"
     ],
     "exclude": ["node_modules"]
 }

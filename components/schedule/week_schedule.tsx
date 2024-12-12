@@ -1,4 +1,3 @@
-// ./components/schedule/week_schedule.tsx
 "use client";
 
 import {
@@ -6,15 +5,29 @@ import {
     ChevronDownIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
-    Cog6ToothIcon,
     PlusIcon,
 } from "@heroicons/react/24/outline";
 import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 import isoWeek from "dayjs/plugin/isoWeek";
-import Modal from "../modal/modal";
+
+import { StaffAssignment } from "@prisma/client";
+import AddScheduleModal from "@/app/staff/schedule/add_schedule_modal";
+import { getStaffAssignments, getWeekSchedules } from "./actions";
 
 dayjs.extend(isoWeek);
+
+interface Schedule {
+    id: string;
+    storeId: string;
+    store: {
+        store_name: string;
+    };
+    title: string;
+    start: Date;
+    end: Date;
+    isAllDay: boolean;
+}
 
 export default function WeekSchedule() {
     const nowDate = dayjs();
@@ -26,15 +39,38 @@ export default function WeekSchedule() {
         "CAL" | "YEAR" | "MONTH"
     >("CAL");
     const [showModal, setShowModal] = useState(false);
-    const [showSettings, setShowSettings] = useState(false); // New state for settings
+    const [schedules, setSchedules] = useState<Schedule[]>([]);
+    const [assignments, setAssignments] = useState<
+        (StaffAssignment & { store: { store_name: string } })[]
+    >([]);
 
     const dateSelectorToggle = () => setIsShowDateSelector(!isShowDateSelector);
+
+    useEffect(() => {
+        const fetchSchedules = async () => {
+            const fetchedSchedules = await getWeekSchedules(
+                currentDate.startOf("week").format("YYYY-MM-DD")
+            );
+            setSchedules(fetchedSchedules);
+        };
+
+        fetchSchedules();
+    }, [currentDate]);
 
     useEffect(() => {
         if (isShowDateSelector) {
             setDisplayedMonth(currentDate);
         }
     }, [isShowDateSelector, currentDate]);
+
+    useEffect(() => {
+        const fetchAssignments = async () => {
+            const fetchedAssignments = await getStaffAssignments();
+            setAssignments(fetchedAssignments);
+        };
+
+        fetchAssignments();
+    }, []);
 
     const getWeekDates = (date: dayjs.Dayjs) => {
         const startOfWeek = date.startOf("week");
@@ -70,34 +106,29 @@ export default function WeekSchedule() {
     const goToPreviousMonth = () =>
         setDisplayedMonth(displayedMonth.subtract(1, "month"));
 
+    const hasSchedule = (date: dayjs.Dayjs) => {
+        return schedules.some((schedule) =>
+            dayjs(schedule.start).isSame(date, "day")
+        );
+    };
+
     return (
         <>
             <div className="flex flex-col gap-3">
-                <div className="flex justify-between items-center font-semibold">
-                    <div
-                        onClick={dateSelectorToggle}
-                        className="flex items-center gap-1 p-2 select-none rounded-xl hover:bg-gray-100 cursor-pointer"
-                    >
-                        <span>{`${currentDate.year()}년 ${
-                            currentDate.month() + 1
-                        }월`}</span>
-                        <ChevronDownIcon
-                            width={20}
-                            className={`${
-                                isShowDateSelector ? "-rotate-180" : ""
-                            } transition-transform`}
-                            style={{ strokeWidth: "2" }}
-                        />
-                    </div>
-                    <button
-                        onClick={() => setShowSettings(true)} // Updated to toggle settings modal
-                        className="p-2 rounded-xl hover:bg-gradient-to-br hover:from-gray-100/60 hover:to-gray-200/60 hover:backdrop-blur-sm"
-                    >
-                        <Cog6ToothIcon
-                            width={20}
-                            style={{ strokeWidth: "2" }}
-                        />
-                    </button>
+                <div
+                    onClick={dateSelectorToggle}
+                    className="flex items-center gap-1 p-2 w-fit select-none rounded-xl hover:bg-gray-100 cursor-pointer font-semibold"
+                >
+                    <span>{`${currentDate.year()}년 ${
+                        currentDate.month() + 1
+                    }월`}</span>
+                    <ChevronDownIcon
+                        width={20}
+                        className={`${
+                            isShowDateSelector ? "-rotate-180" : ""
+                        } transition-transform`}
+                        style={{ strokeWidth: "2" }}
+                    />
                 </div>
 
                 {isShowDateSelector && (
@@ -189,6 +220,7 @@ export default function WeekSchedule() {
                                     const isToday = date.isSame(today, "day");
                                     const isCurrentMonth =
                                         date.month() === displayedMonth.month();
+                                    const hasEvent = hasSchedule(date);
                                     return (
                                         <button
                                             key={idx}
@@ -199,8 +231,13 @@ export default function WeekSchedule() {
                                                     : isCurrentMonth
                                                     ? "bg-white hover:bg-neutral-200 text-neutral-800"
                                                     : "bg-neutral-50 text-neutral-600/80 hover:bg-neutral-200"
-                                            }`}
+                                            } ${hasEvent ? "relative" : ""}`}
                                         >
+                                            {hasEvent && (
+                                                <div className="absolute inset-x-0 top-1 flex justify-center">
+                                                    <div className="w-1 h-1 bg-sky-500 rounded-full"></div>
+                                                </div>
+                                            )}
                                             {date.date()}
                                         </button>
                                     );
@@ -261,88 +298,90 @@ export default function WeekSchedule() {
 
                 <div className="border-t border-gray-200 my-2" />
 
-                <div className="flex flex-col items-center justify-center py-10">
-                    <p className="text-gray-500 mb-2">일정이 없습니다.</p>
-                    <p className="text-gray-500 mb-4">일정을 추가해 보세요!</p>
-                    <button
-                        onClick={() => setShowModal(true)}
-                        className="group px-4 py-2 flex gap-1 justify-between items-center bg-sky-100 text-sky-800 rounded-lg hover:bg-sky-200 transition-colors"
-                    >
-                        <div className="relative flex justify-center items-center">
-                            <CalendarDateRangeIcon width={20} />
-                            <PlusIcon
-                                width={12}
-                                className="absolute -bottom-1 -right-1 bg-sky-100 rounded-full group-hover:bg-sky-200 transition-colors"
-                            />
-                        </div>
-                        <span>일정 추가하기</span>
-                    </button>
-                </div>
+                {schedules.filter((schedule) =>
+                    dayjs(schedule.start).isSame(weekDates[selectedCol], "day")
+                ).length > 0 ? (
+                    <div className="flex flex-col gap-2 items-center">
+                        {schedules
+                            .filter((schedule) =>
+                                dayjs(schedule.start).isSame(
+                                    weekDates[selectedCol],
+                                    "day"
+                                )
+                            )
+                            .map((schedule) => (
+                                <div
+                                    key={schedule.id}
+                                    className="w-full flex items-center justify-between p-4 rounded-lg border border-gray-200"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                                        <div>
+                                            <p className="font-semibold">
+                                                {schedule.title}
+                                            </p>
+                                            <p className="text-sm text-gray-500">
+                                                {schedule.store.store_name}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-end gap-1">
+                                        <p className="text-sm text-gray-500">
+                                            {schedule.isAllDay
+                                                ? "종일"
+                                                : `${dayjs(
+                                                      schedule.start
+                                                  ).format("HH:mm")} - ${dayjs(
+                                                      schedule.end
+                                                  ).format("HH:mm")}`}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        <button
+                            onClick={() => setShowModal(true)}
+                            className="w-36 shrink-0 group px-4 py-2 flex gap-1 justify-between items-center bg-sky-100 text-sky-800 rounded-lg hover:bg-sky-200 transition-colors"
+                        >
+                            <div className="relative flex justify-center items-center">
+                                <CalendarDateRangeIcon width={20} />
+                                <PlusIcon
+                                    width={12}
+                                    className="absolute -bottom-1 -right-1 bg-sky-100 rounded-full group-hover:bg-sky-200 transition-colors"
+                                />
+                            </div>
+                            <span>일정 추가하기</span>
+                        </button>
+                    </div>
+                ) : (
+                    <div className="flex flex-col items-center justify-center py-10">
+                        <p className="text-gray-500 mb-2">일정이 없습니다.</p>
+                        <p className="text-gray-500 mb-4">
+                            일정을 추가해 보세요!
+                        </p>
+                        <button
+                            onClick={() => setShowModal(true)}
+                            className="w-36 shrink-0 group px-4 py-2 flex gap-1 justify-between items-center bg-sky-100 text-sky-800 rounded-lg hover:bg-sky-200 transition-colors"
+                        >
+                            <div className="relative flex justify-center items-center">
+                                <CalendarDateRangeIcon width={20} />
+                                <PlusIcon
+                                    width={12}
+                                    className="absolute -bottom-1 -right-1 bg-sky-100 rounded-full group-hover:bg-sky-200 transition-colors"
+                                />
+                            </div>
+                            <span>일정 추가하기</span>
+                        </button>
+                    </div>
+                )}
             </div>
 
             {showModal && (
-                <Modal
+                <AddScheduleModal
+                    showModal={showModal}
                     onClose={() => setShowModal(false)}
-                    closeButtonVisible
-                    width="450px"
-                    height="650px"
+                    currentDate={currentDate}
+                    assignments={assignments}
                 />
-            )}
-
-            {showSettings && ( // New Settings modal
-                <Modal
-                    onClose={() => setShowSettings(false)}
-                    closeButtonVisible
-                    width="350px"
-                    height="450px"
-                >
-                    <div className="p-5">
-                        <h2 className="text-xl font-semibold mb-4">설정</h2>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">
-                                    시작 요일
-                                </label>
-                                <select className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                                    <option>일요일</option>
-                                    <option>월요일</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700">
-                                    기본 근무 시간
-                                </label>
-                                <div className="mt-1 flex rounded-md shadow-sm">
-                                    <input
-                                        type="time"
-                                        className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300"
-                                    />
-                                    <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
-                                        부터
-                                    </span>
-                                </div>
-                                <div className="mt-1 flex rounded-md shadow-sm">
-                                    <input
-                                        type="time"
-                                        className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-l-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300"
-                                    />
-                                    <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
-                                        까지
-                                    </span>
-                                </div>
-                            </div>
-                            <div>
-                                <label className="flex items-center">
-                                    <input
-                                        type="checkbox"
-                                        className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                    />
-                                    <span className="ml-2">주말 표시</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </Modal>
             )}
         </>
     );

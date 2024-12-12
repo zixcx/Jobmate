@@ -1,3 +1,4 @@
+// ./components/TimeTable/index.tsx
 "use client";
 
 import dayjs from "dayjs";

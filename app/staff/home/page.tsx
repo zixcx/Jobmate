@@ -4,9 +4,21 @@ import {
     BriefcaseIcon,
     ClockIcon,
 } from "@heroicons/react/24/outline";
-import WageChart from "@/components/wage_chart";
 
-export default function StaffHome() {
+import { getStaffHomeData, getWageChartData } from "./actions";
+import { WageChartProps } from "@/components/WageChart/types";
+import WageChart from "@/components/WageChart";
+
+interface StaffHomeData {
+    expectedWage: number;
+    totalWorkHours: number;
+    registeredJobs: number;
+}
+
+export default async function StaffHome() {
+    const staffHomeData: StaffHomeData = await getStaffHomeData();
+    const wageChartData: WageChartProps = await getWageChartData();
+
     return (
         <div className="flex flex-col gap-6 p-10">
             {/* Header Section */}
@@ -27,7 +39,9 @@ export default function StaffHome() {
                             <p className="text-sm text-neutral-600">
                                 이번 달 예상 급여
                             </p>
-                            <p className="text-xl font-semibold">1,234,000원</p>
+                            <p className="text-xl font-semibold">
+                                {staffHomeData.expectedWage.toLocaleString()}원
+                            </p>
                         </div>
                     </div>
 
@@ -39,7 +53,9 @@ export default function StaffHome() {
                             <p className="text-sm text-neutral-600">
                                 이번 달 총 근무시간
                             </p>
-                            <p className="text-xl font-semibold">48시간</p>
+                            <p className="text-xl font-semibold">
+                                {staffHomeData.totalWorkHours}시간
+                            </p>
                         </div>
                     </div>
 
@@ -51,14 +67,24 @@ export default function StaffHome() {
                             <p className="text-sm text-neutral-600">
                                 등록된 일자리
                             </p>
-                            <p className="text-xl font-semibold">4개</p>
+                            <p className="text-xl font-semibold">
+                                {staffHomeData.registeredJobs}개
+                            </p>
                         </div>
                     </div>
                 </div>
 
                 {/* Chart Section */}
                 <div className="flex flex-col w-full bg-white box">
-                    <WageChart />
+                    <WageChart
+                        wageData={wageChartData.wageData}
+                        recentThreeMonthsWageData={
+                            wageChartData.recentThreeMonthsWageData
+                        }
+                        recentThreeMonthsHoursData={
+                            wageChartData.recentThreeMonthsHoursData
+                        }
+                    />
                 </div>
             </div>
         </div>

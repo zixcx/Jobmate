@@ -1,3 +1,4 @@
+// ./components/WageChart/wage_chart.tsx
 "use client";
 
 import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
@@ -15,9 +16,9 @@ import {
     BarElement,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import dayjs from "dayjs";
 import { useState, useMemo } from "react";
 import { Doughnut, Line, Bar } from "react-chartjs-2";
+import { WageChartProps } from "./types";
 
 ChartJS.register(
     ArcElement,
@@ -38,15 +39,15 @@ const centerTextPlugin: Plugin<"doughnut"> = {
         const chartData = chart.config.data;
         const total =
             chartData?.datasets?.[0]?.data?.reduce(
-                (acc, value) => acc + value,
+                (acc: number, value: number) => acc + value,
                 0
             ) || 0;
         const lines = chartData?.datasets?.[0]?.label?.includes("시간")
             ? ["총 근무 시간", `${total}시간`]
             : ["총 급여", `${total.toLocaleString()}원`];
         const fontSize = 18;
-        const lineHeight = fontSize * 1.5; // 줄 간격을 더 넓게 설정하여 테스트
-        const totalHeight = lines.length * lineHeight; // 전체 텍스트 높이 계산
+        const lineHeight = fontSize * 1.5;
+        const totalHeight = lines.length * lineHeight;
 
         ctx.save();
         ctx.font = `${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`;
@@ -54,9 +55,8 @@ const centerTextPlugin: Plugin<"doughnut"> = {
         ctx.textBaseline = "middle";
 
         const textX = width / 2;
-        const textY = height / 2 - totalHeight / 2 + lineHeight / 2; // 전체 높이를 고려해 중앙 위치 조정
+        const textY = height / 2 - totalHeight / 2 + lineHeight / 2;
 
-        // 각 줄을 순서대로 출력
         lines.forEach((line, index) => {
             ctx.fillText(line, textX, textY + (index - 0.5) * lineHeight);
         });
@@ -65,18 +65,11 @@ const centerTextPlugin: Plugin<"doughnut"> = {
     },
 };
 
-interface WorkHours {
-    workHours: dayjs.Dayjs;
-    hourlyWage: number;
-}
-
-interface UserData {
-    [month: string]: {
-        [workplace: string]: WorkHours;
-    };
-}
-
-export default function WageChart() {
+export default function WageChart({
+    wageData,
+    recentThreeMonthsWageData,
+    recentThreeMonthsHoursData,
+}: WageChartProps) {
     const [onSetting, setOnSetting] = useState(false);
     const [showDataLabel, setShowDataLabel] = useState(true);
     const [chartType, setChartType] = useState<"DOUGHNUT" | "LINE" | "BAR">(
@@ -91,160 +84,6 @@ export default function WageChart() {
     const handleChartType = (index: "DOUGHNUT" | "LINE" | "BAR") => {
         setChartType(index);
     };
-
-    const labels = ["근무지1", "근무지2", "근무지3", "근무지4"];
-
-    const userData: UserData = {
-        "8": {
-            근무지1: {
-                workHours: dayjs().hour(14).minute(0),
-                hourlyWage: 10000,
-            },
-            근무지2: {
-                workHours: dayjs().hour(20).minute(0),
-                hourlyWage: 15000,
-            },
-            근무지3: {
-                workHours: dayjs().hour(33).minute(0),
-                hourlyWage: 12000,
-            },
-            근무지4: {
-                workHours: dayjs().hour(6).minute(0),
-                hourlyWage: 20000,
-            },
-        },
-        "9": {
-            근무지1: {
-                workHours: dayjs().hour(10).minute(0),
-                hourlyWage: 10000,
-            },
-            근무지2: {
-                workHours: dayjs().hour(22).minute(0),
-                hourlyWage: 15000,
-            },
-            근무지3: {
-                workHours: dayjs().hour(26).minute(0),
-                hourlyWage: 12000,
-            },
-            근무지4: {
-                workHours: dayjs().hour(10).minute(0),
-                hourlyWage: 20000,
-            },
-        },
-        "10": {
-            근무지1: {
-                workHours: dayjs().hour(16).minute(0),
-                hourlyWage: 10000,
-            },
-            근무지2: {
-                workHours: dayjs().hour(10).minute(0),
-                hourlyWage: 15000,
-            },
-            근무지3: {
-                workHours: dayjs().hour(38).minute(0),
-                hourlyWage: 12000,
-            },
-            근무지4: {
-                workHours: dayjs().hour(14).minute(0),
-                hourlyWage: 20000,
-            },
-        },
-    };
-
-    const colors = [
-        "rgba(255, 99, 132, 0.5)",
-        "rgba(54, 162, 235, 0.5)",
-        "rgba(255, 206, 86, 0.5)",
-        "rgba(75, 192, 192, 0.5)",
-        "rgba(153, 102, 255, 0.5)",
-        "rgba(255, 159, 64, 0.5)",
-        "rgba(201, 203, 207, 0.5)",
-        "rgba(100, 100, 255, 0.5)",
-        "rgba(200, 200, 100, 0.5)",
-        "rgba(100, 200, 150, 0.5)",
-    ];
-
-    const borderColors = [
-        "rgba(255, 99, 132, 1)",
-        "rgba(54, 162, 235, 1)",
-        "rgba(255, 206, 86, 1)",
-        "rgba(75, 192, 192, 1)",
-        "rgba(153, 102, 255, 1)",
-        "rgba(255, 159, 64, 1)",
-        "rgba(201, 203, 207, 1)",
-        "rgba(100, 100, 255, 1)",
-        "rgba(200, 200, 100, 1)",
-        "rgba(100, 200, 150, 1)",
-    ];
-
-    // 근무지별 급여 분석 데이터 (현재 달 기준)
-    const wageData = useMemo(
-        () => ({
-            labels,
-            datasets: [
-                {
-                    label: "급여 데이터",
-                    backgroundColor: colors,
-                    borderColor: borderColors,
-                    data: labels.map((label) => {
-                        const currentMonthData = userData["10"];
-                        return (
-                            (currentMonthData[label]?.workHours?.hour() || 0) *
-                            (currentMonthData[label]?.hourlyWage || 0)
-                        );
-                    }),
-                },
-            ],
-        }),
-        [labels, colors, borderColors, userData]
-    );
-
-    // 최근 3개월간 급여 분석 데이터
-    const recentThreeMonthsWageData = useMemo(
-        () => ({
-            labels,
-            datasets: [
-                {
-                    label: "최근 3개월 급여 데이터",
-                    backgroundColor: colors,
-                    borderColor: borderColors,
-                    data: labels.map((label) =>
-                        Object.values(userData).reduce(
-                            (acc, monthData) =>
-                                acc +
-                                (monthData[label]?.workHours?.hour() || 0) *
-                                    (monthData[label]?.hourlyWage || 0),
-                            0
-                        )
-                    ),
-                },
-            ],
-        }),
-        [labels, colors, borderColors, userData]
-    );
-
-    // 최근 3개월간 근무 시간 분석 데이터
-    const recentThreeMonthsHoursData = useMemo(
-        () => ({
-            labels,
-            datasets: [
-                {
-                    label: "최근 3개월 근무 시간 데이터",
-                    backgroundColor: colors,
-                    borderColor: borderColors,
-                    data: labels.map((label) =>
-                        Object.values(userData).reduce(
-                            (acc, monthData) =>
-                                acc +
-                                (monthData[label]?.workHours?.hour() || 0),
-                            0
-                        )
-                    ),
-                },
-            ],
-        }),
-        [labels, colors, borderColors, userData]
-    );
 
     const options: ChartOptions<"doughnut"> = {
         plugins: {
@@ -336,7 +175,6 @@ export default function WageChart() {
     const [selectedDataViewType, setSelectedDataViewType] =
         useState<DataViewType>(dataViewType[0]);
 
-    // selectedDataViewType에 따라 chartData를 계산
     const chartData = useMemo(() => {
         switch (selectedDataViewType) {
             case "이번달 근무 시간 분석":
@@ -442,7 +280,6 @@ export default function WageChart() {
             )}
 
             <div className="flex justify-center items-center h-[300px] lg:h-[400px]">
-                {/* 차트 컴포넌트에서 chartData 사용 */}
                 {chartType === "DOUGHNUT" && (
                     <Doughnut
                         options={options}

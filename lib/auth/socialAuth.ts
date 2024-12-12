@@ -1,10 +1,7 @@
-import { redirect } from "next/navigation";
-
 class SocialAuth {
     async getKakaoToken(
         code: string
     ): Promise<{ access_token?: string; error?: string }> {
-        // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 반환 타입 변경
         const tokenParams = new URLSearchParams({
             grant_type: "authorization_code",
             client_id: process.env.KAKAO_REST_API_KEY!,

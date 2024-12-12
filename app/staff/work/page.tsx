@@ -8,8 +8,6 @@ import { getStores, applyForStore } from "./actions";
 import Modal from "@/components/modal/modal";
 import StoreCard from "@/components/store_card";
 import { debounce } from "lodash";
-import { Event } from "@/components/TimeTable/types";
-import dayjs from "dayjs";
 
 interface Store {
     id: string;
@@ -19,44 +17,6 @@ interface Store {
     store_address: string;
     store_detail_address: string | null;
 }
-
-const sampleEvents: Event[] = [
-    {
-        title: "event1",
-        weekday: "SUN",
-        start: dayjs().hour(10).minute(0),
-        end: dayjs().hour(13).minute(0),
-        subtitle: "store1",
-    },
-    {
-        title: "event2",
-        weekday: "THU",
-        start: dayjs().hour(9).minute(0),
-        end: dayjs().hour(12).minute(0),
-        subtitle: "store2",
-    },
-    {
-        title: "event3",
-        weekday: "FRI",
-        start: dayjs().hour(17).minute(0),
-        end: dayjs().hour(21).minute(0),
-        subtitle: "store3",
-    },
-    {
-        title: "event4",
-        weekday: "TUE",
-        start: dayjs().hour(13).minute(0),
-        end: dayjs().hour(17).minute(0),
-        subtitle: "store4",
-    },
-    {
-        title: "event5",
-        weekday: "WED",
-        start: dayjs().hour(12).minute(0),
-        end: dayjs().hour(13).minute(0),
-        subtitle: "store5",
-    },
-];
 
 export default function StaffWork() {
     const [stores, setStores] = useState<Store[]>([]);

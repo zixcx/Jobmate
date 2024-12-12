@@ -1,4 +1,3 @@
-// ./app/staff/work/page.tsx
 "use client";
 
 import { useCallback, useState, useEffect } from "react";
@@ -9,9 +8,7 @@ import { getStores, applyForStore } from "./actions";
 import Modal from "@/components/modal/modal";
 import StoreCard from "@/components/store_card";
 import { debounce } from "lodash";
-import TimeTable from "@/components/TimeTable";
 import { Event } from "@/components/TimeTable/types";
-import { PlusIcon } from "lucide-react";
 import dayjs from "dayjs";
 
 interface Store {
@@ -124,12 +121,12 @@ export default function StaffWork() {
     return (
         <div className="flex flex-col w-full gap-6 p-10">
             <h1 className="title-lg">근무</h1>
-            <div className="grid gap-6 md:grid-cols-2">
-                <div className="flex flex-col gap-6">
-                    <div className="bg-white box">
+            <div className="w-full">
+                <div className="flex flex-col gap-6 w-full">
+                    <div className="bg-white box w-full">
                         <h2 className="title mb-4">알림 🔔</h2>
                         {stores.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center gap-4">
+                            <div className="flex flex-col items-center justify-center gap-4 w-full">
                                 <p className="text-center">
                                     연결된 근무지가 없어요 🙀
                                 </p>
@@ -147,13 +144,8 @@ export default function StaffWork() {
                             <StoreCarousel stores={stores} />
                         )}
                     </div>
-                    {/* Add more components or information here */}
-                    <div className="bg-white box">
-                        <h2 className="title mb-4">근무 통계</h2>
-                        <p>여기에 근무 통계 정보를 추가할 수 있습니다.</p>
-                    </div>
                 </div>
-                <div className="bg-white box flex flex-col justify-center items-center">
+                {/* <div className="bg-white box flex flex-col justify-center items-center">
                     <div className="w-full flex justify-between items-center mb-4">
                         <span className="text-xl font-semibold">시간표</span>
                         <button
@@ -168,69 +160,69 @@ export default function StaffWork() {
                     </div>
 
                     <TimeTable events={sampleEvents} />
-
-                    {/* Todo: sampleEvents -> event by fetch to db */}
-                </div>
+                </div> */}
             </div>
 
-            {showStoreSearchModal && (
-                <Modal
-                    onClose={() => setShowStoreSearchModal(false)}
-                    closeButtonVisible
-                    width="450px"
-                    height="650px"
-                >
-                    <div className="flex flex-col w-full h-full gap-4 p-5">
-                        <SearchInput
-                            placeholder="근무지를 검색해 보세요!"
-                            value={searchQuery}
-                            onChange={handleInputChange}
-                            className="w-full"
-                        />
-                        {searchQuery.trim() === "" && (
-                            <div className="bg-neutral-50 p-4 rounded-lg border">
-                                <p className="text-sm text-neutral-600">
-                                    <span className="font-semibold">
-                                        알려드려요 📢
-                                    </span>
-                                    <br />
-                                    사장님의 <strong>이름</strong> 또는{" "}
-                                    <strong>전화번호</strong> 혹은{" "}
-                                    <strong>가게이름+태그</strong>로 검색해
-                                    보세요!
-                                </p>
-                            </div>
-                        )}
-                        {searchedStores.length > 0 && (
-                            <div className="flex flex-col gap-4 overflow-y-auto">
-                                {searchedStores.map((store) => (
-                                    <StoreCard
-                                        key={store.id}
-                                        {...store}
-                                        store_detail_address={
-                                            store.store_detail_address || ""
-                                        }
-                                        onApply={handleApply}
-                                    />
-                                ))}
-                            </div>
-                        )}
-                        {searchQuery.trim() !== "" && noResults && (
-                            <p className="text-center text-sm text-neutral-400">
-                                검색 결과가 없습니다. 😥
+            {/* Store Search Modal */}
+            <Modal
+                show={showStoreSearchModal} // show prop 추가
+                onClose={() => setShowStoreSearchModal(false)}
+                closeButtonVisible
+                width="450px"
+                height="650px"
+            >
+                <div className="flex flex-col w-full h-full gap-4 p-5">
+                    <SearchInput
+                        placeholder="근무지를 검색해 보세요!"
+                        value={searchQuery}
+                        onChange={handleInputChange}
+                        className="w-full"
+                    />
+                    {searchQuery.trim() === "" && (
+                        <div className="bg-neutral-50 p-4 rounded-lg border">
+                            <p className="text-sm text-neutral-600">
+                                <span className="font-semibold">
+                                    알려드려요 📢
+                                </span>
+                                <br />
+                                사장님의 <strong>이름</strong> 또는{" "}
+                                <strong>전화번호</strong> 혹은{" "}
+                                <strong>가게이름+태그</strong>로 검색해 보세요!
                             </p>
-                        )}
-                    </div>
-                </Modal>
-            )}
-            {showTimeTableModal && (
-                <Modal
-                    onClose={() => setShowTimeTableModal(false)}
-                    width="450px"
-                    height="650px"
-                    closeButtonVisible
-                />
-            )}
+                        </div>
+                    )}
+                    {searchedStores.length > 0 && (
+                        <div className="flex flex-col gap-4 overflow-y-auto">
+                            {searchedStores.map((store) => (
+                                <StoreCard
+                                    key={store.id}
+                                    {...store}
+                                    store_detail_address={
+                                        store.store_detail_address || ""
+                                    }
+                                    onApply={handleApply}
+                                />
+                            ))}
+                        </div>
+                    )}
+                    {searchQuery.trim() !== "" && noResults && (
+                        <p className="text-center text-sm text-neutral-400">
+                            검색 결과가 없습니다. 😥
+                        </p>
+                    )}
+                </div>
+            </Modal>
+
+            {/* Time Table Modal */}
+            <Modal
+                show={showTimeTableModal} // show prop 추가
+                onClose={() => setShowTimeTableModal(false)}
+                width="450px"
+                height="650px"
+                closeButtonVisible
+            >
+                모달 내용~
+            </Modal>
         </div>
     );
 }

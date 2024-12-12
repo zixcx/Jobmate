@@ -113,7 +113,7 @@ export default function AddScheduleModal({
             height="650px"
             show={showModal} // showModal prop을 Modal 컴포넌트에 전달
         >
-            <div className="p-5">
+            <div className="px-5">
                 <h2 className="text-lg font-semibold text-gray-800 mb-4">
                     일정 추가
                 </h2>
@@ -229,27 +229,30 @@ export default function AddScheduleModal({
                 </div>
 
                 <div className="mb-4">
-                    <input
-                        type="checkbox"
-                        id="isAllDay"
-                        checked={isAllDay}
-                        onChange={handleIsAllDayChange}
-                        className="mr-2"
-                    />
-                    <label
-                        htmlFor="isAllDay"
-                        className="text-sm font-medium text-gray-900"
-                    >
-                        하루 종일
-                    </label>
+                    <div className="flex justify-between items-center">
+                        <div className="flex justify-center items-center">
+                            <input
+                                type="checkbox"
+                                id="isAllDay"
+                                checked={isAllDay}
+                                onChange={handleIsAllDayChange}
+                                className="mr-2"
+                            />
+                            <label
+                                htmlFor="isAllDay"
+                                className="text-sm font-medium text-gray-900"
+                            >
+                                하루 종일
+                            </label>
+                        </div>
+                        <button
+                            onClick={handleSubmit}
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        >
+                            일정 추가
+                        </button>
+                    </div>
                 </div>
-
-                <button
-                    onClick={handleSubmit}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                >
-                    일정 추가
-                </button>
             </div>
         </Modal>
     );

@@ -22,12 +22,12 @@ export default function Modal({
 }: ModalProps) {
     return (
         <div
-            className={`fixed inset-0 bg-gray-500 bg-opacity-75 z-50 transition-opacity flex justify-center items-center overflow-hidden ${
+            className={`fixed inset-0 bg-gray-500 bg-opacity-75 z-50 transition-opacity flex justify-center items-center ${
                 show ? "" : "hidden" // show prop 사용
             }`}
         >
             <div
-                className="bg-white rounded-2xl p-4 overflow-y-scroll"
+                className="bg-white rounded-2xl p-4"
                 style={{ width: width, height: height }}
             >
                 {closeButtonVisible && (

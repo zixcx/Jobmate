@@ -72,9 +72,9 @@ export default function StoreCarousel({ stores }: SearchStoreProps) {
                             </span>
                             <span>{stores[index].store_address}</span>
                         </div>
-                        <button className="h-10 mt-3 min-h-10 w-18 btn">
+                        {/* <button className="h-10 mt-3 min-h-10 w-18 btn">
                             출근하기
-                        </button>
+                        </button> */}
                     </animated.div>
                 ))}
             </div>

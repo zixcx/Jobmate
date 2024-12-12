@@ -117,7 +117,7 @@ export default function Selection() {
                     <button
                         onClick={goToNextSection}
                         className={classNames(
-                            "flex items-center mt-5 justify-center h-12 px-3 py-2 transition-colors rounded-lg shadow select-none w-80 md:w-full",
+                            "flex items-center mt-5 justify-center h-12 px-3 py-2 transition-colors rounded-lg shadow select-none w-80",
                             ownerOrStaff
                                 ? "bg-teal-500 text-white hover:bg-teal-600"
                                 : "cursor-not-allowed bg-gray-300 text-gray-500"

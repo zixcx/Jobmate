@@ -5,7 +5,6 @@
 import { logout } from "@/components/navbar/actions";
 import { calculateAge } from "@/lib/etc";
 import {
-    PencilSquareIcon,
     PhoneIcon,
     CalendarIcon,
     UserGroupIcon,
@@ -51,14 +50,6 @@ export default function StaffInteractiveProfile({
                         <h1 className="text-3xl font-bold text-center">
                             {user?.staff?.name}
                         </h1>
-                        <button
-                            onClick={() => {
-                                alert("username edit");
-                            }}
-                            className="absolute -right-9 bottom-0 flex justify-center items-center p-1.5 rounded-lg cursor-pointer hover:bg-neutral-700 transition duration-300"
-                        >
-                            <PencilSquareIcon className="size-5 text-neutral-100" />
-                        </button>
                     </div>
                 </div>
                 <p className="mt-2 text-neutral-400">
@@ -70,9 +61,6 @@ export default function StaffInteractiveProfile({
                     <h2 className="text-2xl font-semibold text-neutral-800">
                         정보
                     </h2>
-                    <button className="flex justify-center items-center p-1.5 rounded-lg cursor-pointer hover:bg-neutral-200 transition duration-300">
-                        <PencilSquareIcon className="size-5 text-neutral-600" />
-                    </button>
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-4">

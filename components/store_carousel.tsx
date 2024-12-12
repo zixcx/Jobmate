@@ -12,12 +12,14 @@ interface Store {
     store_tag: string;
     owner_name: string;
     store_address: string;
-    bg_color: string;
 }
 
 interface SearchStoreProps {
     stores: Store[];
 }
+
+// const DEFAULT_BG_COLOR = "bg-blue-100"; // 기본 배경색
+// const DEFAULT_TEXT_COLOR = "text-blue-800"; // 기본 글자색
 
 export default function StoreCarousel({ stores }: SearchStoreProps) {
     const [slideIndex, setSlideIndex] = useState(0);
@@ -51,11 +53,11 @@ export default function StoreCarousel({ stores }: SearchStoreProps) {
                 {transitions((style, index) => (
                     <animated.div
                         key={stores[index].id}
-                        className="absolute flex flex-col items-center justify-center flex-shrink-0 w-full h-full"
+                        className="absolute flex flex-col items-center justify-center flex-shrink-0 w-full h-full bg-blue-100 text-blue-800"
                         style={{
                             ...style,
-                            backgroundColor: stores[index].bg_color,
-                            color: getContrastYIQ(stores[index].bg_color),
+                            // backgroundColor: stores[index].bg_color,
+                            // color: getContrastYIQ(stores[index].bg_color),
                         }}
                     >
                         <div className="flex flex-col items-center justify-center gap-1">

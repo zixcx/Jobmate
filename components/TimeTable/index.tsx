@@ -1,196 +1,182 @@
-// ./components/TimeTable/index.tsx
 "use client";
 
-import { PlusIcon } from "@heroicons/react/24/outline";
 import dayjs from "dayjs";
 import minMax from "dayjs/plugin/minMax";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { EventItem } from "./EventItem";
 import { EventTooltip } from "./EventTooltip";
 import { Event } from "./types";
-
 dayjs.extend(minMax);
 
-interface TimeTableProps {
-    events: Event[];
-}
+const weekdayMapping: { [key: string]: string } = {
+    SUN: "일",
+    MON: "월",
+    TUE: "화",
+    WED: "수",
+    THU: "목",
+    FRI: "금",
+    SAT: "토",
+};
 
-export default function TimeTable({ events }: TimeTableProps) {
+const events: Event[] = [
+    {
+        title: "event1",
+        weekday: "SUN",
+        start: dayjs().hour(10).minute(0),
+        end: dayjs().hour(13).minute(0),
+        subtitle: "store1",
+    },
+    {
+        title: "event2",
+        weekday: "MON",
+        start: dayjs().hour(10).minute(0),
+        end: dayjs().hour(13).minute(0),
+        subtitle: "store1",
+    },
+    {
+        title: "event3",
+        weekday: "SUN",
+        start: dayjs().hour(16).minute(0),
+        end: dayjs().hour(17).minute(0),
+        subtitle: "store3",
+    },
+    {
+        title: "event4",
+        weekday: "SAT",
+        start: dayjs().hour(11).minute(0),
+        end: dayjs().hour(22).minute(0),
+        subtitle: "store4",
+    },
+    {
+        title: "event5",
+        weekday: "WED",
+        start: dayjs().hour(20).minute(0),
+        end: dayjs().hour(22).minute(0),
+        subtitle: "store4",
+    },
+    {
+        title: "event6",
+        weekday: "FRI",
+        start: dayjs().hour(18).minute(0),
+        end: dayjs().hour(21).minute(0),
+        subtitle: "store4",
+    },
+];
+
+export default function TimeTable() {
     const start_time =
-        events.length > 0
-            ? dayjs.min(events.map((event) => event.start)) ||
-              dayjs().startOf("day")
-            : dayjs().startOf("day");
+        dayjs.min(events.map((event) => event.start)) || dayjs().startOf("day");
     const end_time =
-        events.length > 0
-            ? dayjs.max(events.map((event) => event.end)) ||
-              dayjs().endOf("day")
-            : dayjs().endOf("day");
-    const table_len = end_time.diff(start_time, "minute");
-
+        dayjs.max(events.map((event) => event.end)) || dayjs().endOf("day");
+    const table_len = end_time ? end_time.diff(start_time, "minute") : 1440;
     const [tooltipEvent, setTooltipEvent] = useState<Event | null>(null);
     const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-
     const timetableRef = useRef<HTMLDivElement>(null);
 
     const updateTooltipPosition = useCallback(() => {
-        if (!tooltipEvent || !timetableRef.current) return;
-
+        if (!tooltipEvent) return;
         const eventElement = document.querySelector(
             `[data-event-id="${tooltipEvent.title}"]`
         );
         if (!eventElement) return;
-
         const rect = eventElement.getBoundingClientRect();
-        const timetableRect = timetableRef.current.getBoundingClientRect(); // Get TimeTable container rect
         const isLateWeekday = ["THU", "FRI", "SAT"].includes(
             tooltipEvent.weekday
         );
-
         const TOOLTIP_MARGIN = 10;
         const TOOLTIP_WIDTH = 150;
         const TOOLTIP_HEIGHT = 100;
-
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
-
-        // Calculate position relative to the TimeTable container
         let x = isLateWeekday
-            ? rect.left - timetableRect.left - TOOLTIP_WIDTH - TOOLTIP_MARGIN
-            : rect.right - timetableRect.left + TOOLTIP_MARGIN;
-        let y = rect.top - timetableRect.top;
-
-        // Ensure the tooltip doesn't go off-screen within the TimeTable container
+            ? rect.left - TOOLTIP_WIDTH - TOOLTIP_MARGIN
+            : rect.right + TOOLTIP_MARGIN;
+        let y = rect.top + window.scrollY;
         if (x < TOOLTIP_MARGIN) {
             x = TOOLTIP_MARGIN;
-        } else if (x + TOOLTIP_WIDTH > timetableRect.width - TOOLTIP_MARGIN) {
-            x = timetableRect.width - TOOLTIP_WIDTH - TOOLTIP_MARGIN;
+        } else if (x + TOOLTIP_WIDTH > viewportWidth - TOOLTIP_MARGIN) {
+            x = viewportWidth - TOOLTIP_WIDTH - TOOLTIP_MARGIN;
         }
-
-        if (y + TOOLTIP_HEIGHT > timetableRect.height - TOOLTIP_MARGIN) {
-            y = timetableRect.height - TOOLTIP_HEIGHT - TOOLTIP_MARGIN;
+        if (y + TOOLTIP_HEIGHT > viewportHeight - TOOLTIP_MARGIN) {
+            y = viewportHeight - TOOLTIP_HEIGHT - TOOLTIP_MARGIN;
         }
-
         setTooltipPosition({ x, y });
-    }, [tooltipEvent, timetableRef]);
+    }, [tooltipEvent]);
 
     useEffect(() => {
         const onScroll = () => {
             updateTooltipPosition();
         };
-
         const onResize = () => {
             updateTooltipPosition();
         };
-
         const timetableElement = timetableRef.current;
-
         if (timetableElement) {
             timetableElement.addEventListener("scroll", onScroll, {
                 passive: true,
             });
-            window.addEventListener("scroll", onScroll, { passive: true }); // Add window scroll listener
         }
         window.addEventListener("resize", onResize);
-
         return () => {
             if (timetableElement) {
                 timetableElement.removeEventListener("scroll", onScroll);
-                window.removeEventListener("scroll", onScroll); // Remove window scroll listener
             }
             window.removeEventListener("resize", onResize);
         };
     }, [updateTooltipPosition]);
 
-    const handleEventClick = useCallback(
-        (event: Event, e: React.MouseEvent) => {
-            e.stopPropagation(); // Prevent event bubbling
-            setTooltipEvent(event);
-            updateTooltipPosition();
-        },
-        [updateTooltipPosition]
-    );
-
-    const handleContainerClick = useCallback(() => {
-        setTooltipEvent(null); // Hide tooltip when clicking outside of events
-    }, []);
+    const handleEventClick = (event: Event, e: React.MouseEvent) => {
+        setTooltipEvent(event);
+        const rect = e.currentTarget.getBoundingClientRect();
+        const isLateWeekday = ["THU", "FRI", "SAT"].includes(event.weekday);
+        setTooltipPosition({
+            x: isLateWeekday ? rect.left - 120 : rect.right + 10,
+            y: rect.top + window.scrollY,
+        });
+    };
 
     return (
-        <div
-            className="w-full"
-            ref={timetableRef}
-            onClick={handleContainerClick}
-        >
-            <div className="w-full max-w-md h-[512px] overflow-auto flex justify-center items-center">
-                <div className="flex w-full h-full max-w-md relative">
-                    {" "}
-                    {/* Changed */}
-                    <div className="flex-1 border rounded-lg overflow-hidden relative">
-                        {" "}
-                        {/* Changed */}
+        <div className="w-full" ref={timetableRef}>
+            <div className="w-full h-[512px] overflow-hidden flex justify-center items-center">
+                <div className="flex w-full h-full">
+                    <div className="flex-1 border overflow-hidden">
                         <div className="grid w-full h-full grid-cols-7">
-                            {" "}
-                            {/* Changed */}
-                            {Array(7)
-                                .fill(null)
-                                .map((_, index) => {
-                                    const day = [
-                                        "SUN",
-                                        "MON",
-                                        "TUE",
-                                        "WED",
-                                        "THU",
-                                        "FRI",
-                                        "SAT",
-                                    ][index];
-                                    return (
-                                        <div
-                                            key={day}
-                                            className="border-l first:border-l-0 h-full"
-                                        >
-                                            <div className="relative h-full">
-                                                {events
-                                                    .filter(
-                                                        (event) =>
-                                                            event.weekday ===
-                                                            day
-                                                    )
-                                                    .map(
-                                                        (event, eventIndex) => (
-                                                            <EventItem
-                                                                key={eventIndex}
-                                                                event={event}
-                                                                startTime={
-                                                                    start_time
-                                                                }
-                                                                tableLen={
-                                                                    table_len
-                                                                }
-                                                                onClick={
-                                                                    handleEventClick
-                                                                }
-                                                                data-event-id={
-                                                                    event.title
-                                                                }
-                                                            />
-                                                        )
-                                                    )}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+                            {Object.keys(weekdayMapping).map((key) => (
+                                <div
+                                    key={key}
+                                    className="border-l first:border-l-0 h-full overflow-hidden relative"
+                                >
+                                    {/* 요일 헤더 제거, 주석 처리
+                                    <div className="text-center bg-gray-50 py-2 font-medium">
+                                        {weekdayMapping[key]}
+                                    </div>
+                                    */}
+                                    {events
+                                        .filter(
+                                            (event) => event.weekday === key
+                                        )
+                                        .map((event, eventIndex) => (
+                                            <EventItem
+                                                key={eventIndex}
+                                                event={event}
+                                                startTime={start_time}
+                                                tableLen={table_len}
+                                                onClick={handleEventClick}
+                                                data-event-id={event.title}
+                                            />
+                                        ))}
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
             </div>
             {tooltipEvent && (
-                <div style={{ position: "relative" }}>
-                    <EventTooltip
-                        event={tooltipEvent}
-                        position={tooltipPosition}
-                        onClose={() => setTooltipEvent(null)}
-                    />
-                </div>
+                <EventTooltip
+                    event={tooltipEvent}
+                    position={tooltipPosition}
+                    onClose={() => setTooltipEvent(null)}
+                />
             )}
         </div>
     );

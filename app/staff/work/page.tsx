@@ -10,6 +10,9 @@ import Modal from "@/components/modal/modal";
 import StoreCard from "@/components/store_card";
 import { debounce } from "lodash";
 import TimeTable from "@/components/TimeTable";
+import { Event } from "@/components/TimeTable/types";
+import dayjs from "dayjs";
+import { PlusIcon } from "lucide-react";
 
 interface Store {
     id: string;
@@ -18,14 +21,52 @@ interface Store {
     owner_name: string;
     store_address: string;
     store_detail_address: string | null;
-    bg_color: string;
 }
+
+const sampleEvents: Event[] = [
+    {
+        title: "event1",
+        weekday: "SUN",
+        start: dayjs().hour(10).minute(0),
+        end: dayjs().hour(13).minute(0),
+        subtitle: "store1",
+    },
+    {
+        title: "event2",
+        weekday: "THU",
+        start: dayjs().hour(9).minute(0),
+        end: dayjs().hour(12).minute(0),
+        subtitle: "store2",
+    },
+    {
+        title: "event3",
+        weekday: "FRI",
+        start: dayjs().hour(17).minute(0),
+        end: dayjs().hour(21).minute(0),
+        subtitle: "store3",
+    },
+    {
+        title: "event4",
+        weekday: "TUE",
+        start: dayjs().hour(13).minute(0),
+        end: dayjs().hour(17).minute(0),
+        subtitle: "store4",
+    },
+    {
+        title: "event5",
+        weekday: "WED",
+        start: dayjs().hour(12).minute(0),
+        end: dayjs().hour(13).minute(0),
+        subtitle: "store5",
+    },
+];
 
 export default function StaffWork() {
     const [stores, setStores] = useState<Store[]>([]);
     const [searchedStores, setSearchedStores] = useState<Store[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
-    const [showModal, setShowModal] = useState(false);
+    const [showStoreSearchModal, setShowStoreSearchModal] = useState(false);
+    const [showTimeTableModal, setShowTimeTableModal] = useState(false);
     const [noResults, setNoResults] = useState(false);
 
     const handleSearch = useCallback(
@@ -77,7 +118,9 @@ export default function StaffWork() {
                                     연결된 근무지가 없어요 🙀
                                 </p>
                                 <button
-                                    onClick={() => setShowModal(true)}
+                                    onClick={() =>
+                                        setShowStoreSearchModal(true)
+                                    }
                                     className="btn"
                                 >
                                     <MagnifyingGlassIcon width={16} />
@@ -94,14 +137,31 @@ export default function StaffWork() {
                         <p>여기에 근무 통계 정보를 추가할 수 있습니다.</p>
                     </div>
                 </div>
-                <div className="bg-white box">
-                    <TimeTable />
+                <div className="bg-white box flex flex-col justify-center items-center">
+                    <div className="w-full flex justify-between items-center mb-4">
+                        <span className="text-xl font-semibold">시간표</span>
+                        <button
+                            onClick={() => {
+                                setShowTimeTableModal(true);
+                            }}
+                            className="p-2 hover:bg-neutral-100 rounded-lg active:bg-neutral-200 transition-colors"
+                        >
+                            <PlusIcon
+                                width={20}
+                                style={{ strokeWidth: "1.75" }}
+                            />
+                        </button>
+                    </div>
+
+                    <TimeTable events={sampleEvents} />
+
+                    {/* Todo: sampleEvents -> event by fetch to db */}
                 </div>
             </div>
 
-            {showModal && (
+            {showStoreSearchModal && (
                 <Modal
-                    onClose={() => setShowModal(false)}
+                    onClose={() => setShowStoreSearchModal(false)}
                     closeButtonVisible
                     width="450px"
                     height="650px"
@@ -148,6 +208,14 @@ export default function StaffWork() {
                         )}
                     </div>
                 </Modal>
+            )}
+            {showTimeTableModal && (
+                <Modal
+                    onClose={() => setShowTimeTableModal(false)}
+                    width="450px"
+                    height="650px"
+                    closeButtonVisible
+                />
             )}
         </div>
     );

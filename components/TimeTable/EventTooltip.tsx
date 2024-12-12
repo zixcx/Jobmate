@@ -1,15 +1,12 @@
 // ./components/TimeTable/EventTooltip.tsx
 "use client";
-
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Event } from "./types";
-
 interface EventTooltipProps {
     event: Event;
     position: { x: number; y: number };
     onClose: () => void;
 }
-
 export function EventTooltip({ event, position, onClose }: EventTooltipProps) {
     return (
         <div

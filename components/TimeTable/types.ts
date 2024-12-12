@@ -1,13 +1,13 @@
 // ./components/TimeTable/types.ts
-import dayjs from "dayjs";
+
+import { Dayjs } from "dayjs";
 
 export interface Event {
     title: string;
-    subtitle: string; // subtitle 추가
-    weekday: string;
-    start: dayjs.Dayjs;
-    end: dayjs.Dayjs;
-    // bg_color 속성 제거
+    weekday: Weekday;
+    start: Dayjs;
+    end: Dayjs;
+    subtitle?: string;
 }
 
 export type Weekday = "SUN" | "MON" | "TUE" | "WED" | "THU" | "FRI" | "SAT";

@@ -1,4 +1,3 @@
-// ./components/wage_chart.tsx
 "use client";
 
 import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
@@ -17,7 +16,7 @@ import {
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import dayjs from "dayjs";
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Doughnut, Line, Bar } from "react-chartjs-2";
 
 ChartJS.register(
@@ -66,6 +65,17 @@ const centerTextPlugin: Plugin<"doughnut"> = {
     },
 };
 
+interface WorkHours {
+    workHours: dayjs.Dayjs;
+    hourlyWage: number;
+}
+
+interface UserData {
+    [month: string]: {
+        [workplace: string]: WorkHours;
+    };
+}
+
 export default function WageChart() {
     const [onSetting, setOnSetting] = useState(false);
     const [showDataLabel, setShowDataLabel] = useState(true);
@@ -84,7 +94,7 @@ export default function WageChart() {
 
     const labels = ["근무지1", "근무지2", "근무지3", "근무지4"];
 
-    const userData = {
+    const userData: UserData = {
         "8": {
             근무지1: {
                 workHours: dayjs().hour(14).minute(0),
@@ -168,72 +178,73 @@ export default function WageChart() {
     ];
 
     // 근무지별 급여 분석 데이터 (현재 달 기준)
-    const wageData = {
-        labels,
-        datasets: [
-            {
-                label: "급여 데이터",
-                backgroundColor: colors,
-                borderColor: borderColors,
-                data: labels.map((label) => {
-                    const currentMonthData = userData["10"] as Record<
-                        string,
-                        { workHours: dayjs.Dayjs; hourlyWage: number }
-                    >;
-                    return (
-                        (currentMonthData[label]?.workHours?.hour() || 0) *
-                        (currentMonthData[label]?.hourlyWage || 0)
-                    );
-                }),
-            },
-        ],
-    };
+    const wageData = useMemo(
+        () => ({
+            labels,
+            datasets: [
+                {
+                    label: "급여 데이터",
+                    backgroundColor: colors,
+                    borderColor: borderColors,
+                    data: labels.map((label) => {
+                        const currentMonthData = userData["10"];
+                        return (
+                            (currentMonthData[label]?.workHours?.hour() || 0) *
+                            (currentMonthData[label]?.hourlyWage || 0)
+                        );
+                    }),
+                },
+            ],
+        }),
+        [labels, colors, borderColors, userData]
+    );
 
     // 최근 3개월간 급여 분석 데이터
-    const recentThreeMonthsWageData = {
-        labels,
-        datasets: [
-            {
-                label: "최근 3개월 급여 데이터",
-                backgroundColor: colors,
-                borderColor: borderColors,
-                data: labels.map((label) =>
-                    Object.values(userData).reduce(
-                        (acc, monthData) =>
-                            acc +
-                            ((monthData as Record<string, any>)[
-                                label
-                            ]?.workHours?.hour() || 0) *
-                                ((monthData as Record<string, any>)[label]
-                                    ?.hourlyWage || 0),
-                        0
-                    )
-                ),
-            },
-        ],
-    };
+    const recentThreeMonthsWageData = useMemo(
+        () => ({
+            labels,
+            datasets: [
+                {
+                    label: "최근 3개월 급여 데이터",
+                    backgroundColor: colors,
+                    borderColor: borderColors,
+                    data: labels.map((label) =>
+                        Object.values(userData).reduce(
+                            (acc, monthData) =>
+                                acc +
+                                (monthData[label]?.workHours?.hour() || 0) *
+                                    (monthData[label]?.hourlyWage || 0),
+                            0
+                        )
+                    ),
+                },
+            ],
+        }),
+        [labels, colors, borderColors, userData]
+    );
 
     // 최근 3개월간 근무 시간 분석 데이터
-    const recentThreeMonthsHoursData = {
-        labels,
-        datasets: [
-            {
-                label: "최근 3개월 근무 시간 데이터",
-                backgroundColor: colors,
-                borderColor: borderColors,
-                data: labels.map((label) =>
-                    Object.values(userData).reduce(
-                        (acc, monthData) =>
-                            acc +
-                            ((monthData as Record<string, any>)[
-                                label
-                            ]?.workHours?.hour() || 0),
-                        0
-                    )
-                ),
-            },
-        ],
-    };
+    const recentThreeMonthsHoursData = useMemo(
+        () => ({
+            labels,
+            datasets: [
+                {
+                    label: "최근 3개월 근무 시간 데이터",
+                    backgroundColor: colors,
+                    borderColor: borderColors,
+                    data: labels.map((label) =>
+                        Object.values(userData).reduce(
+                            (acc, monthData) =>
+                                acc +
+                                (monthData[label]?.workHours?.hour() || 0),
+                            0
+                        )
+                    ),
+                },
+            ],
+        }),
+        [labels, colors, borderColors, userData]
+    );
 
     const options: ChartOptions<"doughnut"> = {
         plugins: {
@@ -324,23 +335,25 @@ export default function WageChart() {
     const [showDataViewType, setShowDataViewType] = useState(false);
     const [selectedDataViewType, setSelectedDataViewType] =
         useState<DataViewType>(dataViewType[0]);
-    const [chartData, setChartData] = useState(wageData);
 
-    useEffect(() => {
+    // selectedDataViewType에 따라 chartData를 계산
+    const chartData = useMemo(() => {
         switch (selectedDataViewType) {
             case "이번달 근무 시간 분석":
-                setChartData(recentThreeMonthsHoursData);
-                break;
+                return recentThreeMonthsHoursData;
             case "최근 3개월간 급여 분석":
-                setChartData(recentThreeMonthsWageData);
-                break;
+                return recentThreeMonthsWageData;
             case "최근 3개월간 근무 시간 분석":
-                setChartData(recentThreeMonthsHoursData);
-                break;
+                return recentThreeMonthsHoursData;
             default:
-                setChartData(wageData);
+                return wageData;
         }
-    }, [selectedDataViewType]);
+    }, [
+        selectedDataViewType,
+        recentThreeMonthsHoursData,
+        recentThreeMonthsWageData,
+        wageData,
+    ]);
 
     const toggleDataViewType = () => {
         setShowDataViewType(!showDataViewType);
@@ -429,6 +442,7 @@ export default function WageChart() {
             )}
 
             <div className="flex justify-center items-center h-[300px] lg:h-[400px]">
+                {/* 차트 컴포넌트에서 chartData 사용 */}
                 {chartType === "DOUGHNUT" && (
                     <Doughnut
                         options={options}

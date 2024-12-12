@@ -16,13 +16,11 @@ export default function LoadingOwnerProfile() {
                         </div>
                         <div className="flex justify-center items-center mt-6 relative">
                             <div className="h-9 w-48 md:w-28 bg-neutral-600 rounded animate-pulse"></div>
-                            <div className="absolute -right-9 bottom-0 flex justify-center items-center size-7 rounded bg-neutral-600" />
                         </div>
                     </div>
                     <div className="p-8 md:flex-grow">
                         <div className="flex justify-between mb-6">
                             <div className="h-8 w-16 bg-neutral-200 rounded animate-pulse"></div>
-                            <div className="size-7 rounded bg-neutral-200" />
                         </div>
                         <div className="grid md:grid-cols-2 gap-6">
                             <div className="space-y-4">

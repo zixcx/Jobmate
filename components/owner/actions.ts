@@ -24,19 +24,26 @@ export async function getPendingApplications() {
                 status: "PENDING",
             },
             include: {
-                staff: true,
+                staff: {
+                    include: {
+                        user: true, // User 정보 포함
+                    },
+                },
             },
         });
 
-        // 필터링: staff가 null인 데이터를 제거
+        // 필터링: staff 또는 user가 null인 데이터를 제거
         const validApplications = pendingApplications.filter(
-            (assignment) => assignment.staff !== null
+            (assignment) =>
+                assignment.staff !== null && assignment.staff.user !== null
         );
 
         return validApplications.map((assignment) => ({
             id: assignment.staff!.id,
             name: assignment.staff!.name,
+            avatar: assignment.staff!.user!.avatar,
             role: assignment.role,
+            storeId: assignment.storeId, // storeId 추가
         }));
     } catch (error) {
         console.error("Error fetching pending applications:", error);
@@ -45,14 +52,50 @@ export async function getPendingApplications() {
 }
 
 export async function handleStaffApplication(
-    id: string,
+    staffId: string,
+    storeId: string, // storeId 파라미터 추가
     status: "ACCEPTED" | "REJECTED"
 ) {
     try {
-        await db.staffAssignment.update({
-            where: { id },
-            data: { status },
+        const session = await getSession();
+        if (!session.id) throw new Error("Not authenticated");
+
+        // 현재 owner가 해당 store의 소유자인지 확인
+        const owner = await db.owner.findUnique({
+            where: {
+                userId: session.id,
+                store: {
+                    id: storeId,
+                },
+            },
+            include: { store: true },
         });
+
+        if (!owner) {
+            throw new Error("You are not authorized to perform this action");
+        }
+
+        const staffAssignments = await db.staffAssignment.findMany({
+            where: {
+                staffId: staffId,
+                storeId: storeId, // storeId 추가
+            },
+        });
+
+        if (staffAssignments.length === 0) {
+            throw new Error("Staff assignment not found");
+        }
+
+        // 여러 개의 StaffAssignment 업데이트
+        await Promise.all(
+            staffAssignments.map(async (assignment) => {
+                await db.staffAssignment.update({
+                    where: { id: assignment.id },
+                    data: { status },
+                });
+            })
+        );
+
         revalidatePath("/owner/home");
     } catch (error) {
         console.error("Error handling staff application:", error);
@@ -62,16 +105,43 @@ export async function handleStaffApplication(
 
 export async function getStaffList() {
     try {
+        const session = await getSession();
+        if (!session.id) throw new Error("Not authenticated");
+
+        // 현재 owner와 관련된 store를 가져옴
+        const owner = await db.owner.findUnique({
+            where: { userId: session.id },
+            include: { store: true },
+        });
+
+        if (!owner || !owner.store) {
+            throw new Error("Owner or store not found");
+        }
+
         const staffList = await db.staffAssignment.findMany({
-            where: { status: "ACCEPTED" },
+            where: {
+                storeId: owner.store.id, // owner의 storeId와 일치하는 staffAssignment만 가져옴
+                status: "ACCEPTED",
+            },
             include: {
-                staff: true,
+                staff: {
+                    include: {
+                        user: true, // User 정보 포함
+                    },
+                },
             },
         });
 
-        return staffList.map((assignment) => ({
-            id: assignment.staff?.id || null, // staff가 null일 경우 대비
-            name: assignment.staff?.name || "Unknown", // 이름 처리
+        // staff 또는 user가 null인 경우를 필터링
+        const validStaffList = staffList.filter(
+            (assignment) =>
+                assignment.staff !== null && assignment.staff.user !== null
+        );
+
+        return validStaffList.map((assignment) => ({
+            id: assignment.staff!.id,
+            name: assignment.staff!.name,
+            avatar: assignment.staff!.user!.avatar, // 아바타 정보 추가
             role: assignment.role,
         }));
     } catch (error) {

@@ -1,6 +1,5 @@
 // ./app/owner/work/page.tsx
 import StaffList from "@/components/owner/StaffList";
-import StaffPermissions from "@/components/owner/StaffPermissions";
 
 export default function OwnerWork() {
     return (
@@ -10,7 +9,7 @@ export default function OwnerWork() {
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <StaffList />
-                <StaffPermissions />
+                <div className="box bg-white">todo: add components</div>
             </div>
         </div>
     );

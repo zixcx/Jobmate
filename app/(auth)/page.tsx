@@ -9,7 +9,7 @@ import FullScroll from "@/components/FullScroll";
 
 export default function Home() {
     return (
-        <FullScroll scrollCooldown={400} showIndicator>
+        <FullScroll scrollCooldown={500} showIndicator>
             <HeroSection />
             <FeaturesSection />
             <GuideSection />

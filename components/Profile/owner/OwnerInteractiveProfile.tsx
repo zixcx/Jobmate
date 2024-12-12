@@ -1,10 +1,9 @@
 // ./components/Profile/owner/OwnerInteractiveProfile.tsx
-// ./app/owner/profile/OwnerInteractiveProfile.tsx
+
 "use client";
 
 import { logout } from "@/components/navbar/actions";
 import {
-    PencilSquareIcon,
     PhoneIcon,
     UserGroupIcon,
     ArrowRightOnRectangleIcon,
@@ -43,14 +42,6 @@ export default function OwnerInteractiveProfile({
                     <h1 className="text-3xl font-bold text-center">
                         {user?.owner?.name}
                     </h1>
-                    <button
-                        onClick={() => {
-                            alert("username edit");
-                        }}
-                        className="absolute -right-9 bottom-0 flex justify-center items-center p-1.5 rounded-lg cursor-pointer hover:bg-neutral-700 transition duration-300"
-                    >
-                        <PencilSquareIcon className="size-5 text-neutral-100" />
-                    </button>
                 </div>
             </div>
             <div className="p-8 md:flex-grow">
@@ -58,9 +49,6 @@ export default function OwnerInteractiveProfile({
                     <h2 className="text-2xl font-semibold text-neutral-800">
                         정보
                     </h2>
-                    <button className="p-1.5 rounded-lg cursor-pointer hover:bg-neutral-200 transition duration-300">
-                        <PencilSquareIcon className="size-5 text-neutral-600" />
-                    </button>
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-4">

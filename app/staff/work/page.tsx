@@ -14,8 +14,8 @@ import dayjs from "dayjs";
 interface Store {
     id: string;
     store_name: string;
-    store_tag: string;
     owner_name: string;
+    store_tag: string;
     store_address: string;
     store_detail_address: string | null;
 }

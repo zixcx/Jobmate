@@ -1,7 +1,6 @@
 // ./components/store_carousel.tsx
 "use client";
 
-import { getContrastYIQ } from "@/lib/textColor";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { useTransition, animated } from "react-spring";

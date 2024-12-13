@@ -340,7 +340,7 @@ export default function WeekSchedule() {
                             ))}
                         <button
                             onClick={() => setShowModal(true)}
-                            className="w-36 shrink-0 group px-4 py-2 flex gap-1 justify-between items-center bg-sky-100 text-sky-800 rounded-lg hover:bg-sky-200 transition-colors"
+                            className="w-40 shrink-0 group px-4 py-2 flex gap-1 justify-between items-center bg-sky-100 text-sky-800 rounded-lg hover:bg-sky-200 transition-colors"
                         >
                             <div className="relative flex justify-center items-center">
                                 <CalendarDateRangeIcon width={20} />

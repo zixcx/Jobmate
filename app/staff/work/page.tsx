@@ -96,7 +96,11 @@ export default function StaffWork() {
                         </div>
                         <div className="flex flex-col gap-2">
                             <h2 className="title mb-4">추천 가게 🏬</h2>
-                            <StoreCarousel stores={stores} />
+                            {stores.length !== 0 ? (
+                                <StoreCarousel stores={stores} />
+                            ) : (
+                                <p>추천 가게가 없습니다.</p>
+                            )}
                         </div>
                     </div>
                 </div>

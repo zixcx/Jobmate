@@ -83,34 +83,21 @@ export default function StaffWork() {
             <h1 className="title-lg">근무</h1>
             <div className="w-full">
                 <div className="flex flex-col gap-6 w-full">
-                    <div className="bg-white box w-full">
-                        <h2 className="title mb-4">가게 등록 ✅</h2>
-                        <button
-                            onClick={() => setShowStoreSearchModal(true)}
-                            className="btn"
-                        >
-                            <MagnifyingGlassIcon width={16} />
-                            <span>찾으러 가기</span>
-                        </button>
-                        <h2 className="title mb-4">추천 가게 🏬</h2>
-                        {stores.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center gap-4 w-full">
-                                {/* <p className="text-center">
-                                    연결된 근무지가 없어요 🙀
-                                </p> */}
-                                <button
-                                    onClick={() =>
-                                        setShowStoreSearchModal(true)
-                                    }
-                                    className="btn"
-                                >
-                                    <MagnifyingGlassIcon width={16} />
-                                    <span>찾으러 가기</span>
-                                </button>
-                            </div>
-                        ) : (
+                    <div className="bg-white box w-full flex flex-col gap-5">
+                        <div className="flex flex-col gap-2">
+                            <h2 className="title mb-4">가게 등록 ✅</h2>
+                            <button
+                                onClick={() => setShowStoreSearchModal(true)}
+                                className="btn self-center"
+                            >
+                                <MagnifyingGlassIcon width={16} />
+                                <span>찾으러 가기</span>
+                            </button>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <h2 className="title mb-4">추천 가게 🏬</h2>
                             <StoreCarousel stores={stores} />
-                        )}
+                        </div>
                     </div>
                 </div>
                 {/* <div className="bg-white box flex flex-col justify-center items-center">

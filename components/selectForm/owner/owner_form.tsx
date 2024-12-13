@@ -188,7 +188,7 @@ export default function OwnerForm() {
                 onClose={closeModal}
                 closeButtonVisible
             >
-                <div className="w-full h-full border">
+                <div className="w-full h-full">
                     <DaumPostcode
                         onComplete={handleComplete}
                         onClose={handleClose}

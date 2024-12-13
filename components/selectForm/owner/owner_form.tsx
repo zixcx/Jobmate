@@ -186,6 +186,7 @@ export default function OwnerForm() {
             <Modal
                 show={isShowModal} // show prop 추가
                 onClose={closeModal}
+                height="580px"
                 closeButtonVisible
             >
                 <div className="w-full h-full">
